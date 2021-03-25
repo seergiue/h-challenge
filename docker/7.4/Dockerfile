@@ -22,6 +22,4 @@ WORKDIR /var/www
 # Set user
 USER $user
 
-#RUN composer install
-
 RUN ["php", "-a"]

@@ -17,5 +17,9 @@ down:
 console:
 	@docker-compose exec app $(filter-out $@,$(MAKECMDGOALS))
 
+.PHONY: start
+start:
+	@docker-compose exec app php bin/console vending-machine:start
+
 %:
 	@:

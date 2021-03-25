@@ -13,6 +13,14 @@ Performs the following tasks:
 - Builds the containers
 - Installs composer dependencies
 
+## Start
+
+Start the application (vending machine)
+
+```
+$ make start
+```
+
 ## Up/Down
 
 Brings the application up
