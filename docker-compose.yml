@@ -1,0 +1,15 @@
+version: "3"
+services:
+  app:
+    container_name: h-app
+    build:
+      args:
+        user: sergi
+        uid: 1912
+      context: ./
+      dockerfile: ./docker/7.4/Dockerfile
+    tty: true
+    stdin_open: true
+    working_dir: /var/www
+    volumes:
+      - ./app:/var/www
