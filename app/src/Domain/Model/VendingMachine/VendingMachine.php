@@ -2,6 +2,7 @@
 
 namespace App\Domain\Model;
 
+use App\Domain\ValueObject\Money;
 use App\Domain\ValueObject\VendingMachineId;
 
 class VendingMachine
@@ -41,5 +42,25 @@ class VendingMachine
     public function getWallet(): VendingMachineWallet
     {
         return $this->wallet;
+    }
+
+    public static function withProductsAndWallet(): self
+    {
+        $products = [
+            new VendingMachineProduct(new Product('Water', Money::fromValue(0.65), ProductType::water()), 1),
+            new VendingMachineProduct(new Product('Juice', Money::fromValue(1.00), ProductType::juice()), 1),
+            new VendingMachineProduct(new Product('Soda', Money::fromValue(1.50), ProductType::soda()), 1),
+        ];
+
+        $coins = [
+            new VendingMachineWalletCoin(new Coin(Money::fromValue(0.05)), 10),
+            new VendingMachineWalletCoin(new Coin(Money::fromValue(0.10)), 10),
+            new VendingMachineWalletCoin(new Coin(Money::fromValue(0.25)), 10),
+            new VendingMachineWalletCoin(new Coin(Money::fromValue(1.00)), 10),
+        ];
+
+        $wallet = new VendingMachineWallet($coins);
+
+        return new self($products, $wallet);
     }
 }

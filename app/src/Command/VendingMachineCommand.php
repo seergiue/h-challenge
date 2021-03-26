@@ -2,14 +2,9 @@
 
 namespace App\Command;
 
-use App\Domain\Model\Coin;
-use App\Domain\Model\Product;
-use App\Domain\Model\VendingMachine;
-use App\Domain\Model\VendingMachineProduct;
-use App\Domain\Model\VendingMachineWallet;
-use App\Domain\Model\VendingMachineWalletCoin;
-use App\Domain\ValueObject\Money;
+use App\Domain\Service\VendingMachineService;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
@@ -18,36 +13,52 @@ class VendingMachineCommand extends Command
 {
     protected static $defaultName = 'vending-machine:start';
 
+    private VendingMachineService $vendingMachineService;
+
+    public function __construct(VendingMachineService $vendingMachineService)
+    {
+        $this->vendingMachineService = $vendingMachineService;
+
+        parent::__construct();
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $products = [
-            new VendingMachineProduct(new Product('Water', Money::fromValue(0.65)), 10),
-            new VendingMachineProduct(new Product('Juice', Money::fromValue(1.00)), 10),
-            new VendingMachineProduct(new Product('Soda', Money::fromValue(1.50)), 10),
-        ];
-        $coins = [
-            new VendingMachineWalletCoin(new Coin(Money::fromValue(0.05)), 10),
-            new VendingMachineWalletCoin(new Coin(Money::fromValue(0.10)), 10),
-            new VendingMachineWalletCoin(new Coin(Money::fromValue(0.25)), 10),
-            new VendingMachineWalletCoin(new Coin(Money::fromValue(1.00)), 10),
-        ];
+        $vendingMachineManager = $this->vendingMachineService->getManager();
+        $vendingMachineManager->newMachine();
 
-        $wallet = new VendingMachineWallet($coins);
-        $vendingMachine = new VendingMachine($products, $wallet);
+        $output->writeln(PHP_EOL . 'Welcome to the Vending Machine' . PHP_EOL);
 
         while(true) {
+            $table = new Table($output);
+            $table
+                ->setHeaders(['Number', 'Action'])
+                ->setHeaderTitle('Actions')
+                ->setStyle('box')
+                ->setRows([
+                    ['1', 'List products'],
+                    ['2', 'Select product'],
+                    ['3', 'Insert coins'],
+                    ['4', 'Return coins'],
+                    ['5', 'Service'],
+                    ['6', 'Exit'],
+                ]);
+            $table->render();
+
             $helper = $this->getHelper('question');
-            $question = new Question('Demo action: ');
+            $question = new Question('Select an action (Ex: 1): ');
 
             $action = $helper->ask($input, $output, $question);
 
-            if ($action === 'exit') {
-                break;
+            switch ($action) {
+                case '1':
+                    $vendingMachineManager->getvendingMachineProducts($output);
+                    break;
+                case '6':
+                    return Command::SUCCESS;
+                default:
+                    $output->writeln(PHP_EOL . '<error>Invalid action</error>');
             }
-
-            $output->writeln('Action name is ' . $action);
         }
-
-        return Command::SUCCESS;
     }
 }
