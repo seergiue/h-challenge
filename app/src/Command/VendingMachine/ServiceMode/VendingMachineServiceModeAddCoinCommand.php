@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\VendingMachine\ServiceMode;
 
 use App\Domain\Exception\InvalidCoinTypeException;
 use App\Domain\Service\VendingMachineService;
@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ServiceAddCoinVendingMachineCommand extends Command
+class VendingMachineServiceModeAddCoinCommand extends Command
 {
     protected static $defaultName = 'vending-machine:service-mode:add-coins';
 

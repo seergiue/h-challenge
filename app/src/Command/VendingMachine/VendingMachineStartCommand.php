@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\VendingMachine;
 
 use App\Domain\Service\VendingMachineService;
 use Symfony\Component\Console\Command\Command;
@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class StartVendingMachineCommand extends Command
+class VendingMachineStartCommand extends Command
 {
     protected static $defaultName = 'vending-machine:start';
 

@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\VendingMachine;
 
 use App\Domain\Service\VendingMachineService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ServiceModeSummaryVendingMachineCommand extends Command
+class VendingMachineListProductsCommand extends Command
 {
-    protected static $defaultName = 'vending-machine:service-mode:summary';
+    protected static $defaultName = 'vending-machine:list-products';
 
     private VendingMachineService $vendingMachineService;
 
@@ -27,18 +26,14 @@ class ServiceModeSummaryVendingMachineCommand extends Command
         $this->setHidden(true);
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$this->vendingMachineService->isInitialized()) {
             $output->writeln('<error>Run vending-machine:start</error>');
             return Command::SUCCESS;
         }
 
-        $io = new SymfonyStyle($input, $output);
-
-        $io->title('Vending Machine [Service Mode]');
-        $io->newLine();
-        $this->vendingMachineService->getSummary($output);
+        $this->vendingMachineService->getVendingMachineProducts($output);
         $helper = $this->getHelper('question');
         $question = new Question('Press enter to go back');
 
