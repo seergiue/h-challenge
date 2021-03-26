@@ -10,11 +10,16 @@ class VendingMachineWallet
     private array $coins;
 
     /**
-     * @param VendingMachineWalletCoin[] $coins
+     * @var float[]
      */
-    public function __construct(array $coins)
+    private array $inserted = [];
+
+    /**
+     * @param VendingMachineWalletCoin[] $vendingMachineWalletCoins
+     */
+    public function __construct(array $vendingMachineWalletCoins)
     {
-        $this->coins = $coins;
+        $this->coins = $vendingMachineWalletCoins;
     }
 
     /**
@@ -23,5 +28,47 @@ class VendingMachineWallet
     public function getCoins(): array
     {
         return $this->coins;
+    }
+
+    /**
+     * @return float[]
+     */
+    public function getInserted(): array
+    {
+        return $this->inserted;
+    }
+
+    public function addCoin(VendingMachineWalletCoin $vendingMachineWalletCoin): self
+    {
+        $index = $this->getCoinIndex($vendingMachineWalletCoin);
+
+        if (null !== $index) {
+            $this->coins[$index]->add();
+        } else {
+            $this->coins[] = $vendingMachineWalletCoin;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param VendingMachineWalletCoin[] $vendingMachineWalletCoins
+     */
+    public function addCoins(array $vendingMachineWalletCoins): void
+    {
+        foreach ($vendingMachineWalletCoins as $vendingMachineWalletCoin) {
+            $this->addCoin($vendingMachineWalletCoin);
+        }
+    }
+
+    private function getCoinIndex(VendingMachineWalletCoin $vendingMachineWalletCoin): ?int
+    {
+        foreach ($this->coins as $index => $selfCoin) {
+            if ($selfCoin->getCoin()->getType()->equals($vendingMachineWalletCoin->getCoin()->getType())) {
+                return $index;
+            }
+        }
+
+        return null;
     }
 }

@@ -8,7 +8,7 @@ class VendingMachineWalletCoin
 
     private int $quantity;
 
-    public function __construct(Coin $coin, $quantity)
+    public function __construct(Coin $coin, int $quantity)
     {
         $this->coin = $coin;
         $this->quantity = $quantity;
@@ -22,5 +22,10 @@ class VendingMachineWalletCoin
     public function getQuantity(): int
     {
         return $this->quantity;
+    }
+
+    public function add(): void
+    {
+        $this->quantity++;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Domain\Model;
 
 use App\Domain\ValueObject\Money;
+use App\Domain\ValueObject\ProductType;
 
 class Product
 {

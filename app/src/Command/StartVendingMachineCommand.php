@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class VendingMachineCommand extends Command
+class StartVendingMachineCommand extends Command
 {
     protected static $defaultName = 'vending-machine:start';
 
@@ -20,6 +20,7 @@ class VendingMachineCommand extends Command
     const ACTION_RETURN_COINS = 4;
     const ACTION_SERVICE = 5;
     const ACTION_EXIT = 6;
+
 
     private VendingMachineService $vendingMachineService;
 
@@ -32,20 +33,38 @@ class VendingMachineCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->write(sprintf("\033\143"));
         $io = new SymfonyStyle($input, $output);
+        $this->clearConsole($output);
         $this->vendingMachineService->newMachine();
 
-        $io->title('Welcome to the Vending Machine');
-
         while(true) {
-            $action = $this->askAction($input, $output);
-            $io->newLine();
-            $output->write(sprintf("\033\143"));
+            $this->clearConsole($output);
+            $io->title('Welcome to the Vending Machine');
+            $table = new Table($output);
+            $table
+                ->setHeaders(['Number', 'Action'])
+                ->setHeaderTitle('Actions')
+                ->setStyle('box')
+                ->setRows([
+                    [self::ACTION_LIST_PRODUCTS, 'List products'],
+                    [self::ACTION_SELECT_PRODUCT, 'Select product'],
+                    [self::ACTION_INSERT_COINS, 'Insert coins'],
+                    [self::ACTION_RETURN_COINS, 'Return coins'],
+                    [self::ACTION_SERVICE, 'Service'],
+                    [self::ACTION_EXIT, 'Exit'],
+                ]);
+            $table->render();
+
+            $helper = $this->getHelper('question');
+            $question = new Question('Select an action (Ex: 1): ');
+
+            $action = $helper->ask($input, $output, $question);
+            $this->clearConsole($output);
 
             switch ($action) {
                 case self::ACTION_LIST_PRODUCTS:
-                    $this->vendingMachineService->getvendingMachineProducts($output);
+                    $command = $this->getApplication()->find('vending-machine:list-products');
+                    $command->run($input, $output);
                     break;
                 case self::ACTION_SELECT_PRODUCT:
                     break;
@@ -54,37 +73,17 @@ class VendingMachineCommand extends Command
                 case self::ACTION_RETURN_COINS:
                     break;
                 case self::ACTION_SERVICE:
+                    $command = $this->getApplication()->find('vending-machine:service');
+                    $command->run($input, $output);
                     break;
                 case self::ACTION_EXIT:
                     return Command::SUCCESS;
-                default:
-                    $output->writeln(PHP_EOL . '<error>Invalid action</error>');
             }
-
-            $output->writeln(PHP_EOL . '<info>=====================================================</>' . PHP_EOL);
         }
     }
 
-    private function askAction(InputInterface $input, OutputInterface $output): string
+    private function clearConsole(OutputInterface $output): void
     {
-        $table = new Table($output);
-        $table
-            ->setHeaders(['Number', 'Action'])
-            ->setHeaderTitle('Actions')
-            ->setStyle('box')
-            ->setRows([
-                [self::ACTION_LIST_PRODUCTS, 'List products'],
-                [self::ACTION_SELECT_PRODUCT, 'Select product'],
-                [self::ACTION_INSERT_COINS, 'Insert coins'],
-                [self::ACTION_RETURN_COINS, 'Return coins'],
-                [self::ACTION_SERVICE, 'Service'],
-                [self::ACTION_EXIT, 'Exit'],
-            ]);
-        $table->render();
-
-        $helper = $this->getHelper('question');
-        $question = new Question('Select an action (Ex: 1): ');
-
-        return $helper->ask($input, $output, $question);
+        $output->write(sprintf("\033\143"));
     }
 }
