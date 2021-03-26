@@ -13,9 +13,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class StartServiceVendingMachineCommand extends Command
 {
     const SERVICE_SUMMARY = 1;
-    const SERVICE_EXIT = 2;
+    const SERVICE_ADD_COIN = 2;
+    const SERVICE_EXIT = 3;
 
-    protected static $defaultName = 'vending-machine:service';
+    protected static $defaultName = 'vending-machine:service-mode:start';
 
     private VendingMachineService $vendingMachineService;
 
@@ -24,6 +25,11 @@ class StartServiceVendingMachineCommand extends Command
         $this->vendingMachineService = $vendingMachineService;
 
         parent::__construct();
+    }
+
+    protected function configure(): void
+    {
+        $this->setHidden(true);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -36,6 +42,7 @@ class StartServiceVendingMachineCommand extends Command
         $output->write(sprintf("\033\143"));
         $io = new SymfonyStyle($input, $output);
         while(true) {
+            $output->write(sprintf("\033\143"));
             $io->title('Vending Machine [Service Mode]');
 
             $table = new Table($output);
@@ -45,6 +52,7 @@ class StartServiceVendingMachineCommand extends Command
                 ->setStyle('box')
                 ->setRows([
                     [self::SERVICE_SUMMARY, 'Summary'],
+                    [self::SERVICE_ADD_COIN, 'Add coins'],
                     [self::SERVICE_EXIT, 'Go back'],
                 ]);
             $table->render();
@@ -57,6 +65,13 @@ class StartServiceVendingMachineCommand extends Command
             switch ($action) {
                 case self::SERVICE_SUMMARY:
                     $output->write(sprintf("\033\143"));
+                    $command = $this->getApplication()->find('vending-machine:service-mode:summary');
+                    $command->run($input, $output);
+                    break;
+                case self::SERVICE_ADD_COIN:
+                    $output->write(sprintf("\033\143"));
+                    $command = $this->getApplication()->find('vending-machine:service-mode:add-coins');
+                    $command->run($input, $output);
                     break;
                 case self::SERVICE_EXIT:
                     $output->write(sprintf("\033\143"));

@@ -16,7 +16,19 @@ class InMemoryVendingMachineRepository implements VendingMachineRepository
 
     public function save(VendingMachine $vendingMachine): VendingMachine
     {
-        $this->vendingMachines[] = $vendingMachine;
+        $selfKey = null;
+        foreach ($this->vendingMachines as $key => $selfVendingMachine) {
+            if ($vendingMachine->getId()->equals($vendingMachine->getId())) {
+                $selfKey = $key;
+                break;
+            }
+        }
+
+        if (null !== $selfKey) {
+            $this->vendingMachines[$selfKey] = $vendingMachine;
+        } else {
+            $this->vendingMachines[] = $vendingMachine;
+        }
 
         return $vendingMachine;
     }

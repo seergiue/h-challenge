@@ -73,7 +73,7 @@ class StartVendingMachineCommand extends Command
                 case self::ACTION_RETURN_COINS:
                     break;
                 case self::ACTION_SERVICE:
-                    $command = $this->getApplication()->find('vending-machine:service');
+                    $command = $this->getApplication()->find('vending-machine:service-mode:start');
                     $command->run($input, $output);
                     break;
                 case self::ACTION_EXIT:

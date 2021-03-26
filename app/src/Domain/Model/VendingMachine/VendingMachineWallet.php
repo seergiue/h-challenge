@@ -10,7 +10,7 @@ class VendingMachineWallet
     private array $coins;
 
     /**
-     * @var float[]
+     * @var Coin[]
      */
     private array $inserted = [];
 
@@ -31,14 +31,14 @@ class VendingMachineWallet
     }
 
     /**
-     * @return float[]
+     * @return Coin[]
      */
     public function getInserted(): array
     {
         return $this->inserted;
     }
 
-    public function addCoin(VendingMachineWalletCoin $vendingMachineWalletCoin): self
+    public function addCoin(VendingMachineWalletCoin $vendingMachineWalletCoin, bool $serviceMode = false): self
     {
         $index = $this->getCoinIndex($vendingMachineWalletCoin);
 
@@ -46,6 +46,10 @@ class VendingMachineWallet
             $this->coins[$index]->add();
         } else {
             $this->coins[] = $vendingMachineWalletCoin;
+        }
+
+        if (!$serviceMode) {
+            $this->inserted[] = $vendingMachineWalletCoin->getCoin();
         }
 
         return $this;

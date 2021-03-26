@@ -8,7 +8,11 @@ interface VendingMachineService
 {
     public function newMachine(): void;
 
-    public function getvendingMachineProducts(OutputInterface $output): void;
+    public function getVendingMachineProducts(OutputInterface $output): void;
 
     public function isInitialized(): bool;
+
+    public function addCoin(float $coinValue, bool $serviceMode = false): void;
+
+    public function getSummary(OutputInterface $output): void;
 }

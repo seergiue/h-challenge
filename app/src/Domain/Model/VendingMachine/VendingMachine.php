@@ -55,10 +55,10 @@ class VendingMachine
         ];
 
         $coins = [
-            new VendingMachineWalletCoin(new Coin(Money::fromValue(0.05), CoinType::fiveCents()), 10),
-            new VendingMachineWalletCoin(new Coin(Money::fromValue(0.10), CoinType::tenCents()), 10),
-            new VendingMachineWalletCoin(new Coin(Money::fromValue(0.25), CoinType::twentyFiveCents()), 10),
-            new VendingMachineWalletCoin(new Coin(Money::fromValue(1.00), CoinType::oneEuro()), 10)
+            new VendingMachineWalletCoin(new Coin(Money::fromValue(CoinType::fiveCents()->getValue()), CoinType::fiveCents()), 10),
+            new VendingMachineWalletCoin(new Coin(Money::fromValue(CoinType::tenCents()->getValue()), CoinType::tenCents()), 10),
+            new VendingMachineWalletCoin(new Coin(Money::fromValue(CoinType::twentyFiveCents()->getValue()), CoinType::twentyFiveCents()), 10),
+            new VendingMachineWalletCoin(new Coin(Money::fromValue(CoinType::oneEuro()->getValue()), CoinType::oneEuro()), 10)
         ];
 
         $wallet = new VendingMachineWallet($coins);

@@ -6,16 +6,16 @@ use App\Domain\Exception\InvalidCoinTypeException;
 
 class CoinType
 {
-    private const AMOUNT_5_CENTS = 0.05;
-    private const AMOUNT_10_CENTS = 0.10;
-    private const AMOUNT_25_CENTS = 0.25;
-    private const AMOUNT_1_EURO = 1.00;
+    private const TYPE_5_CENTS = 0.05;
+    private const TYPE_10_CENTS = 0.10;
+    private const TYPE_25_CENTS = 0.25;
+    private const TYPE_1_EURO = 1.00;
 
-    private const VALID_AMOUNTS = [
-        self::AMOUNT_5_CENTS,
-        self::AMOUNT_10_CENTS,
-        self::AMOUNT_25_CENTS,
-        self::AMOUNT_1_EURO
+    public const VALID_TYPES = [
+        self::TYPE_5_CENTS,
+        self::TYPE_10_CENTS,
+        self::TYPE_25_CENTS,
+        self::TYPE_1_EURO
     ];
 
     private float $type;
@@ -26,24 +26,29 @@ class CoinType
         $this->type = $type;
     }
 
+    public static function fromValue(float $type): self
+    {
+        return new self($type);
+    }
+
     public static function fiveCents(): self
     {
-        return new self(self::AMOUNT_5_CENTS);
+        return new self(self::TYPE_5_CENTS);
     }
 
     public static function tenCents(): self
     {
-        return new self(self::AMOUNT_10_CENTS);
+        return new self(self::TYPE_10_CENTS);
     }
 
     public static function twentyFiveCents(): self
     {
-        return new self(self::AMOUNT_25_CENTS);
+        return new self(self::TYPE_25_CENTS);
     }
 
     public static function oneEuro(): self
     {
-        return new self(self::AMOUNT_1_EURO);
+        return new self(self::TYPE_1_EURO);
     }
 
     public function getValue(): float
@@ -61,7 +66,7 @@ class CoinType
      */
     private function assertIsValid(float $type): void
     {
-        if (!in_array($type, self::VALID_AMOUNTS)) {
+        if (!in_array($type, self::VALID_TYPES)) {
             throw new InvalidCoinTypeException($type);
         }
     }
