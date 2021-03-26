@@ -24,8 +24,15 @@ class VendingMachineWalletCoin
         return $this->quantity;
     }
 
-    public function add(): void
+    public function add(int $quantity = 1): void
     {
-        $this->quantity++;
+        $this->quantity += $quantity;
+    }
+
+    public function remove(int $quantity = 1): void
+    {
+        if (($this->quantity - $quantity) >= 0) {
+            $this->quantity -= $quantity;
+        }
     }
 }

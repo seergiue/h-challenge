@@ -8,7 +8,7 @@ use App\Domain\Service\Repository\VendingMachineRepository;
 use App\Domain\ValueObject\CoinType;
 use App\Domain\ValueObject\Money;
 
-class AddCoinVendingMachineHandler
+class RemoveCoinVendingMachineHandler
 {
     private VendingMachineRepository $vendingMachineRepository;
 
@@ -16,10 +16,10 @@ class AddCoinVendingMachineHandler
         $this->vendingMachineRepository = $vendingMachineRepository;
     }
 
-    public function execute(AddCoinVendingMachine $request): void
+    public function execute(RemoveCoinVendingMachine $request): void
     {
         $vendingMachine = $this->vendingMachineRepository->findById($request->getVendingMachineId());
-        $vendingMachine->getWallet()->addCoin(
+        $vendingMachine->getWallet()->removeCoin(
             new VendingMachineWalletCoin(
                 new Coin(
                     Money::fromValue(CoinType::fromValue($request->getType())->getValue()),

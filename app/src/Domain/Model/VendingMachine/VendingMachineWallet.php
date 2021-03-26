@@ -43,13 +43,24 @@ class VendingMachineWallet
         $index = $this->getCoinIndex($vendingMachineWalletCoin);
 
         if (null !== $index) {
-            $this->coins[$index]->add();
+            $this->coins[$index]->add($vendingMachineWalletCoin->getQuantity());
         } else {
             $this->coins[] = $vendingMachineWalletCoin;
         }
 
         if (!$serviceMode) {
             $this->inserted[] = $vendingMachineWalletCoin->getCoin();
+        }
+
+        return $this;
+    }
+
+    public function removeCoin(VendingMachineWalletCoin $vendingMachineWalletCoin): self
+    {
+        $index = $this->getCoinIndex($vendingMachineWalletCoin);
+
+        if (null !== $index) {
+            $this->coins[$index]->remove();
         }
 
         return $this;

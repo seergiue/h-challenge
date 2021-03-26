@@ -14,5 +14,7 @@ interface VendingMachineService
 
     public function addCoin(float $coinValue, bool $serviceMode = false): void;
 
+    public function removeCoin(float $coinValue, bool $serviceMode = false): void;
+
     public function getSummary(OutputInterface $output): void;
 }

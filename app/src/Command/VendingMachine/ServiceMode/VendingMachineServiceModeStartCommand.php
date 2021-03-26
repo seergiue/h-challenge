@@ -14,7 +14,8 @@ class VendingMachineServiceModeStartCommand extends Command
 {
     const SERVICE_SUMMARY = 1;
     const SERVICE_ADD_COIN = 2;
-    const SERVICE_EXIT = 3;
+    const SERVICE_REMOVE_COIN = 3;
+    const SERVICE_EXIT = 4;
 
     protected static $defaultName = 'vending-machine:service-mode:start';
 
@@ -53,6 +54,7 @@ class VendingMachineServiceModeStartCommand extends Command
                 ->setRows([
                     [self::SERVICE_SUMMARY, 'Summary'],
                     [self::SERVICE_ADD_COIN, 'Add coins'],
+                    [self::SERVICE_REMOVE_COIN, 'Remove coins'],
                     [self::SERVICE_EXIT, 'Go back'],
                 ]);
             $table->render();
@@ -71,6 +73,11 @@ class VendingMachineServiceModeStartCommand extends Command
                 case self::SERVICE_ADD_COIN:
                     $output->write(sprintf("\033\143"));
                     $command = $this->getApplication()->find('vending-machine:service-mode:add-coins');
+                    $command->run($input, $output);
+                    break;
+                case self::SERVICE_REMOVE_COIN:
+                    $output->write(sprintf("\033\143"));
+                    $command = $this->getApplication()->find('vending-machine:service-mode:remove-coins');
                     $command->run($input, $output);
                     break;
                 case self::SERVICE_EXIT:
