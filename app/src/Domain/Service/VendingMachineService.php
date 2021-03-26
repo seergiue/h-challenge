@@ -7,8 +7,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 interface VendingMachineService
 {
-    public function getManager(): self;
-
     public function newMachine(): void;
 
     /**

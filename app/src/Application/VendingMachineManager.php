@@ -29,11 +29,6 @@ class VendingMachineManager implements VendingMachineService
         $this->presenter = $presenter;
     }
 
-    public function getManager(): self
-    {
-        return $this;
-    }
-
     public function newMachine(): void
     {
         $vendingMachine = $this->createVendingMachineHandler->execute();
