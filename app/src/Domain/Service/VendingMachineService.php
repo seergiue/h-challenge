@@ -12,7 +12,7 @@ interface VendingMachineService
 
     public function isInitialized(): bool;
 
-    public function addCoin(float $coinValue, bool $serviceMode = false): void;
+    public function addCoin(float $coinValue, int $quantity = 1, bool $serviceMode = false): void;
 
     public function removeCoin(float $coinValue, bool $serviceMode = false): void;
 

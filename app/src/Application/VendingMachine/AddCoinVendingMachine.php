@@ -10,10 +10,13 @@ class AddCoinVendingMachine
 
     private float $type;
 
-    public function __construct(VendingMachineId $vendingMachineId, float $type)
+    private int $quantity;
+
+    public function __construct(VendingMachineId $vendingMachineId, float $type, int $quantity)
     {
         $this->vendingMachineId = $vendingMachineId;
         $this->type = $type;
+        $this->quantity = $quantity;
     }
 
     public function getVendingMachineId(): VendingMachineId
@@ -24,5 +27,10 @@ class AddCoinVendingMachine
     public function getType(): float
     {
         return $this->type;
+    }
+
+    public function getQuantity(): int
+    {
+        return $this->quantity;
     }
 }

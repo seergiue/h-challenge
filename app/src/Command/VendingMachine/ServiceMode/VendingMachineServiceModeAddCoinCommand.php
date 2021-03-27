@@ -43,11 +43,19 @@ class VendingMachineServiceModeAddCoinCommand extends Command
             $output->writeln('Add coins to the machine. Accepted values: ' . implode(', ', CoinType::VALID_TYPES));
             $io->newLine();
             $helper = $this->getHelper('question');
-            $question = new Question('Coin to add: ');
 
-            $coin = $helper->ask($input, $output, $question);
+            do {
+                $question = new Question('Coin to add: ');
+                $coin = $helper->ask($input, $output, $question);
+            } while(!in_array($coin, CoinType::VALID_TYPES));
+
+            do {
+                $question = new Question('Quantity to add: ');
+                $quantity = $helper->ask($input, $output, $question);
+            } while(!is_int((int)$quantity) || (is_int((int)$quantity) && $quantity < 1));
+
             try {
-                $this->vendingMachineService->addCoin((float) $coin);
+                $this->vendingMachineService->addCoin((float) $coin, $quantity);
                 break;
             } catch (InvalidCoinTypeException $exception) {
                 $output->write(sprintf("\033\143"));

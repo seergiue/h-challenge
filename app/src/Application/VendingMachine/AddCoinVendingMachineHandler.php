@@ -25,7 +25,7 @@ class AddCoinVendingMachineHandler
                     Money::fromValue(CoinType::fromValue($request->getType())->getValue()),
                     CoinType::fromValue($request->getType())
                 ),
-                1
+                $request->getQuantity()
             )
         );
 

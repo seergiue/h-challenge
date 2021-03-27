@@ -72,11 +72,11 @@ class VendingMachineManager implements VendingMachineService
         return null !== $this->id;
     }
 
-    public function addCoin(float $coinValue, bool $serviceMode = false): void
+    public function addCoin(float $coinValue, int $quantity = 1, bool $serviceMode = false): void
     {
         $this->assertIsInitialized();
 
-        $request = new AddCoinVendingMachine($this->id, $coinValue);
+        $request = new AddCoinVendingMachine($this->id, $coinValue, $quantity);
         $this->addCoinVendingMachineHandler->execute($request);
     }
 
