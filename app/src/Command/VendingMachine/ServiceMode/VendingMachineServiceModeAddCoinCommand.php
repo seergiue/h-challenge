@@ -52,7 +52,7 @@ class VendingMachineServiceModeAddCoinCommand extends Command
             do {
                 $question = new Question('Quantity to add: ');
                 $quantity = $helper->ask($input, $output, $question);
-            } while(!is_int((int)$quantity) || (is_int((int)$quantity) && $quantity < 1));
+            } while(!is_numeric($quantity) || (is_numeric($quantity) && $quantity < 1));
 
             try {
                 $this->vendingMachineService->addCoin((float) $coin, $quantity);
