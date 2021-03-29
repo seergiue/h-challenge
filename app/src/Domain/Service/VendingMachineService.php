@@ -25,4 +25,6 @@ interface VendingMachineService
     public function getVendingMachineProductsInServiceMode(OutputInterface $output): void;
 
     public function addProduct(int $position, int $quantity): void;
+
+    public function removeProduct(int $position): void;
 }

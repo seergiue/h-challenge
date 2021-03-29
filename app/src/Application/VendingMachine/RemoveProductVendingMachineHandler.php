@@ -4,7 +4,7 @@ namespace App\Application\VendingMachine;
 
 use App\Domain\Service\Repository\VendingMachineRepository;
 
-class AddProductVendingMachineHandler
+class RemoveProductVendingMachineHandler
 {
     private VendingMachineRepository $vendingMachineRepository;
 
@@ -12,11 +12,11 @@ class AddProductVendingMachineHandler
         $this->vendingMachineRepository = $vendingMachineRepository;
     }
 
-    public function execute(AddProductVendingMachine $request): void
+    public function execute(RemoveProductVendingMachine $request): void
     {
         $vendingMachine = $this->vendingMachineRepository->findById($request->getVendingMachineId());
         $product = $vendingMachine->getProducts()[$request->getPosition()];
-        $product->setQuantity($product->getQuantity() + $request->getQuantity());
+        $product->setQuantity($product->getQuantity() - 1);
 
         $this->vendingMachineRepository->save($vendingMachine);
     }

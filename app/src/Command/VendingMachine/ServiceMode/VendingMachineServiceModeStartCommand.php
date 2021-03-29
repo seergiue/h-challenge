@@ -90,6 +90,9 @@ class VendingMachineServiceModeStartCommand extends Command
                     $command->run($input, $output);
                     break;
                 case self::SERVICE_REMOVE_PRODUCT:
+                    $output->write(sprintf("\033\143"));
+                    $command = $this->getApplication()->find('vending-machine:service-mode:remove-products');
+                    $command->run($input, $output);
                     break;
                 case self::SERVICE_EXIT:
                     $output->write(sprintf("\033\143"));

@@ -26,7 +26,9 @@ class VendingMachineProduct
 
     public function setQuantity(int $quantity): self
     {
-        $this->quantity = $quantity;
+        if ($quantity >= 0) {
+            $this->quantity = $quantity;
+        }
 
         return $this;
     }
