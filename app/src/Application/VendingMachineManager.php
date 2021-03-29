@@ -14,11 +14,16 @@ use App\Application\VendingMachine\GetSummaryVendingMachine;
 use App\Application\VendingMachine\GetSummaryVendingMachineHandler;
 use App\Application\VendingMachine\GetVendingMachineProducts;
 use App\Application\VendingMachine\GetVendingMachineProductsHandler;
+use App\Application\VendingMachine\HasCoinsToReturnVendingMachine;
+use App\Application\VendingMachine\HasCoinsToReturnVendingMachineHandler;
 use App\Application\VendingMachine\RemoveCoinVendingMachine;
 use App\Application\VendingMachine\RemoveCoinVendingMachineHandler;
 use App\Application\VendingMachine\RemoveProductVendingMachine;
 use App\Application\VendingMachine\RemoveProductVendingMachineHandler;
+use App\Application\VendingMachine\ReturnCoinsVendingMachine;
+use App\Application\VendingMachine\ReturnCoinsVendingMachineHandler;
 use App\Domain\Exception\VendingManagerNotInitializedException;
+use App\Domain\Model\Coin;
 use App\Domain\Service\VendingMachineService;
 use App\Domain\ValueObject\VendingMachineId;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -37,6 +42,8 @@ class VendingMachineManager implements VendingMachineService
     private VendingMachineProductsInServiceModePresenter $vendingMachineProductsInServiceModePresenter;
     private AddProductVendingMachineHandler $addProductVendingMachineHandler;
     private RemoveProductVendingMachineHandler $removeProductVendingMachineHandler;
+    private HasCoinsToReturnVendingMachineHandler $hasCoinsToReturnVendingMachineHandler;
+    private ReturnCoinsVendingMachineHandler $returnCoinsVendingMachineHandler;
 
     public function __construct(
         CreateVendingMachineHandler $createVendingMachineHandler,
@@ -48,7 +55,9 @@ class VendingMachineManager implements VendingMachineService
         RemoveCoinVendingMachineHandler $removeCoinVendingMachineHandler,
         VendingMachineProductsInServiceModePresenter $vendingMachineProductsInServiceModePresenter,
         AddProductVendingMachineHandler $addProductVendingMachineHandler,
-        RemoveProductVendingMachineHandler $removeProductVendingMachineHandler
+        RemoveProductVendingMachineHandler $removeProductVendingMachineHandler,
+        HasCoinsToReturnVendingMachineHandler $hasCoinsToReturnVendingMachineHandler,
+        ReturnCoinsVendingMachineHandler $returnCoinsVendingMachineHandler
     ) {
         $this->createVendingMachineHandler = $createVendingMachineHandler;
         $this->getVendingMachineProductsHandler = $getVendingMachineProductsHandler;
@@ -60,6 +69,8 @@ class VendingMachineManager implements VendingMachineService
         $this->vendingMachineProductsInServiceModePresenter = $vendingMachineProductsInServiceModePresenter;
         $this->addProductVendingMachineHandler = $addProductVendingMachineHandler;
         $this->removeProductVendingMachineHandler = $removeProductVendingMachineHandler;
+        $this->hasCoinsToReturnVendingMachineHandler = $hasCoinsToReturnVendingMachineHandler;
+        $this->returnCoinsVendingMachineHandler = $returnCoinsVendingMachineHandler;
     }
 
     public function newMachine(): void
@@ -141,6 +152,25 @@ class VendingMachineManager implements VendingMachineService
 
         $request = new RemoveProductVendingMachine($this->id, $position);
         $this->removeProductVendingMachineHandler->execute($request);
+    }
+
+    public function hasCoinsToReturn(): bool
+    {
+        $this->assertIsInitialized();
+
+        $request = new HasCoinsToReturnVendingMachine($this->id);
+        return $this->hasCoinsToReturnVendingMachineHandler->execute($request);
+    }
+
+    /**
+     * @return Coin[]
+     */
+    public function returnCoins(): array
+    {
+        $this->assertIsInitialized();
+
+        $request = new ReturnCoinsVendingMachine($this->id);
+        return $this->returnCoinsVendingMachineHandler->execute($request);
     }
 
     /**

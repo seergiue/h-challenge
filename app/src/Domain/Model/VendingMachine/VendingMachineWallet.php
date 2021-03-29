@@ -76,6 +76,22 @@ class VendingMachineWallet
         }
     }
 
+    public function hasCoinsToReturn(): bool
+    {
+        return !empty($this->inserted);
+    }
+
+    /**
+     * @return Coin[]
+     */
+    public function returnCoins(): array
+    {
+        $inserted = $this->inserted;
+        $this->inserted = [];
+
+        return $inserted;
+    }
+
     private function getCoinIndex(VendingMachineWalletCoin $vendingMachineWalletCoin): ?int
     {
         foreach ($this->coins as $index => $selfCoin) {

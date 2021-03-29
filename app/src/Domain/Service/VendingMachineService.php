@@ -2,7 +2,6 @@
 
 namespace App\Domain\Service;
 
-use App\Domain\Model\VendingMachineProduct;
 use App\Domain\ValueObject\VendingMachineId;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -27,4 +26,8 @@ interface VendingMachineService
     public function addProduct(int $position, int $quantity): void;
 
     public function removeProduct(int $position): void;
+
+    public function hasCoinsToReturn(): bool;
+
+    public function returnCoins(): array;
 }
