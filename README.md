@@ -1,5 +1,9 @@
 # h-challenge
 
+### Are you thirsty?
+
+![alt text](screenshot.png)
+
 ## Setup
 
 Setup the infrastructure

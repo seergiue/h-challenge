@@ -86,10 +86,14 @@ class VendingMachineWallet
      */
     public function returnCoins(): array
     {
-        $inserted = $this->inserted;
+        $insertedCoins = $this->inserted;
+
+        foreach ($insertedCoins as $insertedCoin) {
+            $this->removeCoin(new VendingMachineWalletCoin($insertedCoin, 1));
+        }
         $this->inserted = [];
 
-        return $inserted;
+        return $insertedCoins;
     }
 
     private function getCoinIndex(VendingMachineWalletCoin $vendingMachineWalletCoin): ?int

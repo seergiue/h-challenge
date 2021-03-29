@@ -69,6 +69,8 @@ class VendingMachineStartCommand extends Command
                 case self::ACTION_SELECT_PRODUCT:
                     break;
                 case self::ACTION_INSERT_COINS:
+                    $command = $this->getApplication()->find('vending-machine:insert-coins');
+                    $command->run($input, $output);
                     break;
                 case self::ACTION_RETURN_COINS:
                     $command = $this->getApplication()->find('vending-machine:return-coins');

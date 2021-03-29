@@ -55,7 +55,7 @@ class VendingMachineServiceModeAddCoinCommand extends Command
             } while(!is_numeric($quantity) || (is_numeric($quantity) && $quantity < 1));
 
             try {
-                $this->vendingMachineService->addCoin((float) $coin, $quantity);
+                $this->vendingMachineService->addCoin((float) $coin, $quantity, true);
                 break;
             } catch (InvalidCoinTypeException $exception) {
                 $output->write(sprintf("\033\143"));
