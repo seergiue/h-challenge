@@ -144,7 +144,7 @@ class VendingMachineWallet
             foreach ($coins as $coin) {
                 $quantity = (int)($change->getAmount() / $coin->getMoney()->getAmount());
 
-                if ($quantity > 0 && ($coin->getQuantity() - $quantity > 0)) {
+                if ($quantity > 0 && ($coin->getQuantity() - $quantity >= 0)) {
                     for ($i = 0; $i < $quantity; $i++) {
                         $coinsToReturn[] = $coin->getMoney();
                         $this->removeCoin($coin);
