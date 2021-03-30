@@ -2,6 +2,7 @@
 
 namespace App\Domain\ValueObject;
 
+use App\Domain\Exception\InvalidVendingMachineMoneyValueException;
 use Money\Money;
 
 class MoneyValue
@@ -55,5 +56,12 @@ class MoneyValue
         }
 
         return $typesObjects;
+    }
+
+    public static function assertIsValid(Money $money): void
+    {
+        if (!in_array($money->getAmount(), self::VALID_TYPES)) {
+            throw new InvalidVendingMachineMoneyValueException($money);
+        }
     }
 }

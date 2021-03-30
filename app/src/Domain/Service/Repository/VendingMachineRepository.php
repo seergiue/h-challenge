@@ -2,7 +2,7 @@
 
 namespace App\Domain\Service\Repository;
 
-use App\Domain\Model\VendingMachine;
+use App\Domain\Model\VendingMachine\VendingMachine;
 use App\Domain\ValueObject\VendingMachineId;
 
 interface VendingMachineRepository

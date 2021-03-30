@@ -29,7 +29,7 @@ use App\Application\VendingMachine\SelectProductVendingMachineHandler;
 use App\Domain\Exception\NotEnoughChangeVendingMachineException;
 use App\Domain\Exception\NotEnoughMoneyVendingMachineException;
 use App\Domain\Exception\VendingManagerNotInitializedException;
-use App\Domain\Model\VendingMachineProduct;
+use App\Domain\Model\VendingMachine\VendingMachineProduct;
 use App\Domain\Service\VendingMachineService;
 use App\Domain\ValueObject\VendingMachineId;
 use Money\Money;

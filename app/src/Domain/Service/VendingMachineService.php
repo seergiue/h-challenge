@@ -2,7 +2,7 @@
 
 namespace App\Domain\Service;
 
-use App\Domain\Model\VendingMachineProduct;
+use App\Domain\Model\VendingMachine\VendingMachineProduct;
 use App\Domain\ValueObject\VendingMachineId;
 use Money\Money;
 use Symfony\Component\Console\Output\OutputInterface;

@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Repository;
 
 use App\Domain\Exception\VendingMachineNotFoundException;
-use App\Domain\Model\VendingMachine;
+use App\Domain\Model\VendingMachine\VendingMachine;
 use App\Domain\Service\Repository\VendingMachineRepository;
 use App\Domain\ValueObject\VendingMachineId;
 

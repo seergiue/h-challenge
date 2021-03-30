@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Domain\Model;
+namespace App\Domain\Model\VendingMachine;
+
+use App\Domain\Model\Product;
 
 class VendingMachineProduct
 {

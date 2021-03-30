@@ -2,7 +2,7 @@
 
 namespace App\Application\VendingMachine;
 
-use App\Domain\Model\VendingMachineWalletCoin;
+use App\Domain\Model\VendingMachine\VendingMachineWalletCoin;
 use App\Domain\Service\Repository\VendingMachineRepository;
 
 class RemoveCoinVendingMachineHandler

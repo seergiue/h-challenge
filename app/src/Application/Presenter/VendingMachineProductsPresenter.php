@@ -2,7 +2,7 @@
 
 namespace App\Application\Presenter;
 
-use App\Domain\Model\VendingMachineProduct;
+use App\Domain\Model\VendingMachine\VendingMachineProduct;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
 use Symfony\Component\Console\Helper\Table;

@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Domain\Model;
+namespace App\Domain\Model\VendingMachine;
 
 use App\Domain\Exception\InvalidVendingMachineProductPositionException;
 use App\Domain\Exception\NotEnoughChangeVendingMachineException;
 use App\Domain\Exception\NotEnoughMoneyVendingMachineException;
 use App\Domain\Exception\ProductOutOfStockVendingMachineException;
+use App\Domain\Model\Product;
 use App\Domain\ValueObject\MoneyValue;
 use Money\Money;
 use App\Domain\ValueObject\ProductType;
@@ -97,6 +98,9 @@ class VendingMachine
         ];
     }
 
+    /**
+     * @throws InvalidVendingMachineProductPositionException
+     */
     public function addProduct(int $position, int $quantity = 1): VendingMachineProduct
     {
         $vendingMachineProduct = $this->getProductAt($position);
@@ -105,6 +109,9 @@ class VendingMachine
         return $vendingMachineProduct;
     }
 
+    /**
+     * @throws InvalidVendingMachineProductPositionException
+     */
     public function removeProduct(int $position): VendingMachineProduct
     {
         $vendingMachineProduct = $this->getProductAt($position);

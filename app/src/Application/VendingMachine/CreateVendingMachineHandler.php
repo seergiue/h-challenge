@@ -2,7 +2,7 @@
 
 namespace App\Application\VendingMachine;
 
-use App\Domain\Model\VendingMachine;
+use App\Domain\Model\VendingMachine\VendingMachine;
 use App\Domain\Service\Repository\VendingMachineRepository;
 
 class CreateVendingMachineHandler

@@ -2,7 +2,8 @@
 
 namespace App\Application\VendingMachine;
 
-use App\Domain\Model\VendingMachineWalletCoin;
+use App\Domain\Exception\InvalidVendingMachineMoneyValueException;
+use App\Domain\Model\VendingMachine\VendingMachineWalletCoin;
 use App\Domain\Service\Repository\VendingMachineRepository;
 
 class AddCoinVendingMachineHandler
@@ -14,6 +15,9 @@ class AddCoinVendingMachineHandler
         $this->vendingMachineRepository = $vendingMachineRepository;
     }
 
+    /**
+     * @throws InvalidVendingMachineMoneyValueException
+     */
     public function execute(AddCoinVendingMachine $request): void
     {
         $vendingMachine = $this->vendingMachineRepository->findById($request->getVendingMachineId());

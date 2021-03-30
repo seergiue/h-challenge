@@ -2,7 +2,7 @@
 
 namespace App\Application\VendingMachine;
 
-use App\Domain\Model\VendingMachineProduct;
+use App\Domain\Model\VendingMachine\VendingMachineProduct;
 use App\Domain\Service\Repository\VendingMachineRepository;
 
 class GetVendingMachineProductsHandler

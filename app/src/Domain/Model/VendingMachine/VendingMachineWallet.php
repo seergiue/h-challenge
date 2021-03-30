@@ -1,8 +1,11 @@
 <?php
 
-namespace App\Domain\Model;
+namespace App\Domain\Model\VendingMachine;
 
+use App\Domain\Exception\InvalidVendingMachineMoneyValueException;
 use App\Domain\Exception\NotEnoughChangeVendingMachineException;
+use App\Domain\Model\Product;
+use App\Domain\ValueObject\MoneyValue;
 use Money\Money;
 
 class VendingMachineWallet
@@ -41,8 +44,13 @@ class VendingMachineWallet
         return $this->inserted;
     }
 
+    /**
+     * @throws InvalidVendingMachineMoneyValueException
+     */
     public function addCoin(VendingMachineWalletCoin $vendingMachineWalletCoin, bool $serviceMode = false): self
     {
+        MoneyValue::assertIsValid($vendingMachineWalletCoin->getMoney());
+
         $index = $this->getCoinIndex($vendingMachineWalletCoin);
 
         if (null !== $index) {

@@ -4,7 +4,7 @@ namespace App\Application\VendingMachine;
 
 use App\Domain\Exception\NotEnoughChangeVendingMachineException;
 use App\Domain\Exception\NotEnoughMoneyVendingMachineException;
-use App\Domain\Model\VendingMachineProduct;
+use App\Domain\Model\VendingMachine\VendingMachineProduct;
 use App\Domain\Service\Repository\VendingMachineRepository;
 use Money\Money;
 
