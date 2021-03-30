@@ -2,24 +2,27 @@
 
 namespace App\Tests\Unit\Application\UseCase\VendingMachine;
 
-use App\Application\UseCase\VendingMachine\AddCoin;
-use App\Application\UseCase\VendingMachine\AddCoinHandler;
-use App\Domain\Exception\InvalidVendingMachineMoneyValueException;
+use App\Application\UseCase\VendingMachine\AddProduct;
+use App\Application\UseCase\VendingMachine\AddProductHandler;
+use App\Domain\Exception\InvalidVendingMachineProductPositionException;
 use App\Domain\Model\VendingMachine\VendingMachine;
 use App\Domain\Service\Repository\VendingMachineRepository;
-use Money\Money;
 use PHPUnit\Framework\TestCase;
 
-class AddCoinVendingMachineHandlerTest extends TestCase
+class AddProductHandlerTest extends TestCase
 {
     private $vendingMachineRepositoryMock;
+
+    private const VALID_POSITION = 0;
+    private const INVALID_POSITION = 999;
+    private const QUANTITY = 1;
 
     public function setUp(): void
     {
         $this->vendingMachineRepositoryMock = $this->createMock(VendingMachineRepository::class);
     }
 
-    public function testItShouldThrowInvalidMoneyValueException()
+    public function testItShouldThrowInvalidVendingMachineProductPosition()
     {
         $expectedVendingMachine = VendingMachine::withProductsAndWallet();
 
@@ -27,19 +30,18 @@ class AddCoinVendingMachineHandlerTest extends TestCase
             ->expects(self::once())
             ->method('findById')
             ->willReturn($expectedVendingMachine);
-        $this->expectException(InvalidVendingMachineMoneyValueException::class);
+        $this->expectException(InvalidVendingMachineProductPositionException::class);
 
-        $case = new AddCoinHandler($this->vendingMachineRepositoryMock);
-        $request = new AddCoin(
+        $case = new AddProductHandler($this->vendingMachineRepositoryMock);
+        $request = new AddProduct(
             $expectedVendingMachine->getId(),
-            Money::EUR(999),
-            1,
-            false
+            self::INVALID_POSITION,
+            self::QUANTITY
         );
         $case->execute($request);
     }
 
-    public function testItShouldAddCoin()
+    public function testItShouldAddProduct()
     {
         $expectedVendingMachine = VendingMachine::withProductsAndWallet();
 
@@ -52,12 +54,11 @@ class AddCoinVendingMachineHandlerTest extends TestCase
             ->method('save')
             ->with($expectedVendingMachine);
 
-        $case = new AddCoinHandler($this->vendingMachineRepositoryMock);
-        $request = new AddCoin(
+        $case = new AddProductHandler($this->vendingMachineRepositoryMock);
+        $request = new AddProduct(
             $expectedVendingMachine->getId(),
-            Money::EUR(25),
-            1,
-            false
+            self::VALID_POSITION,
+            self::QUANTITY
         );
         $case->execute($request);
     }
