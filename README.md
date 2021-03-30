@@ -39,6 +39,14 @@ Brings the application down
 $ make down
 ```
 
+## Testing
+
+To run tests execute the following:
+
+```
+$ make test
+```
+
 ## Machine
 
 To execute a command inside the machine run the following:

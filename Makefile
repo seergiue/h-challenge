@@ -21,5 +21,9 @@ console:
 start:
 	@docker-compose exec app php bin/console vending-machine:start
 
+.PHONY: test
+test:
+	@docker-compose exec app php bin/phpunit
+
 %:
 	@:
