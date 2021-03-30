@@ -5,27 +5,27 @@ namespace App\Application;
 use App\Application\Presenter\VendingMachineProductsAsOptionsPresenter;
 use App\Application\Presenter\VendingMachineProductsPresenter;
 use App\Application\Presenter\VendingMachineSummaryPresenter;
-use App\Application\VendingMachine\AddCoinVendingMachine;
-use App\Application\VendingMachine\AddCoinVendingMachineHandler;
-use App\Application\VendingMachine\AddProductVendingMachine;
-use App\Application\VendingMachine\AddProductVendingMachineHandler;
-use App\Application\VendingMachine\CreateVendingMachineHandler;
-use App\Application\VendingMachine\GetInsertedCoinsVendingMachine;
-use App\Application\VendingMachine\GetInsertedCoinsVendingMachineHandler;
-use App\Application\VendingMachine\GetSummaryVendingMachine;
-use App\Application\VendingMachine\GetSummaryVendingMachineHandler;
-use App\Application\VendingMachine\GetVendingMachineProducts;
-use App\Application\VendingMachine\GetVendingMachineProductsHandler;
-use App\Application\VendingMachine\HasCoinsToReturnVendingMachine;
-use App\Application\VendingMachine\HasCoinsToReturnVendingMachineHandler;
-use App\Application\VendingMachine\RemoveCoinVendingMachine;
-use App\Application\VendingMachine\RemoveCoinVendingMachineHandler;
-use App\Application\VendingMachine\RemoveProductVendingMachine;
-use App\Application\VendingMachine\RemoveProductVendingMachineHandler;
-use App\Application\VendingMachine\ReturnCoinsVendingMachine;
-use App\Application\VendingMachine\ReturnCoinsVendingMachineHandler;
-use App\Application\VendingMachine\SelectProductVendingMachine;
-use App\Application\VendingMachine\SelectProductVendingMachineHandler;
+use App\Application\UseCase\VendingMachine\AddCoin;
+use App\Application\UseCase\VendingMachine\AddCoinHandler;
+use App\Application\UseCase\VendingMachine\AddProduct;
+use App\Application\UseCase\VendingMachine\AddProductHandler;
+use App\Application\UseCase\VendingMachine\CreateVendingMachineHandler;
+use App\Application\UseCase\VendingMachine\GetInsertedCoins;
+use App\Application\UseCase\VendingMachine\GetInsertedCoinsHandler;
+use App\Application\UseCase\VendingMachine\GetSummary;
+use App\Application\UseCase\VendingMachine\GetSummaryHandler;
+use App\Application\UseCase\VendingMachine\GetProducts;
+use App\Application\UseCase\VendingMachine\GetProductsHandler;
+use App\Application\UseCase\VendingMachine\HasCoinsToReturn;
+use App\Application\UseCase\VendingMachine\HasCoinsToReturnHandler;
+use App\Application\UseCase\VendingMachine\RemoveCoin;
+use App\Application\UseCase\VendingMachine\RemoveCoinHandler;
+use App\Application\UseCase\VendingMachine\RemoveProduct;
+use App\Application\UseCase\VendingMachine\RemoveProductHandler;
+use App\Application\UseCase\VendingMachine\ReturnCoins;
+use App\Application\UseCase\VendingMachine\ReturnCoinsHandler;
+use App\Application\UseCase\VendingMachine\SelectProduct;
+use App\Application\UseCase\VendingMachine\SelectProductHandler;
 use App\Domain\Exception\NotEnoughChangeVendingMachineException;
 use App\Domain\Exception\NotEnoughMoneyVendingMachineException;
 use App\Domain\Exception\VendingManagerNotInitializedException;
@@ -40,50 +40,50 @@ class VendingMachineManager implements VendingMachineService
     private ?VendingMachineId $id = null;
 
     private CreateVendingMachineHandler $createVendingMachineHandler;
-    private GetVendingMachineProductsHandler $getVendingMachineProductsHandler;
+    private GetProductsHandler $getProductsHandler;
     private VendingMachineProductsPresenter $vendingMachineProductsPresenter;
-    private AddCoinVendingMachineHandler $addCoinVendingMachineHandler;
+    private AddCoinHandler $addCoinHandler;
     private VendingMachineSummaryPresenter $vendingMachineSummaryPresenter;
-    private GetSummaryVendingMachineHandler $getSummaryVendingMachineHandler;
-    private RemoveCoinVendingMachineHandler $removeCoinVendingMachineHandler;
-    private AddProductVendingMachineHandler $addProductVendingMachineHandler;
-    private RemoveProductVendingMachineHandler $removeProductVendingMachineHandler;
-    private HasCoinsToReturnVendingMachineHandler $hasCoinsToReturnVendingMachineHandler;
-    private ReturnCoinsVendingMachineHandler $returnCoinsVendingMachineHandler;
-    private GetInsertedCoinsVendingMachineHandler $getInsertedCoinsVendingMachineHandler;
+    private GetSummaryHandler $getSummaryHandler;
+    private RemoveCoinHandler $removeCoinHandler;
+    private AddProductHandler $addProductHandler;
+    private RemoveProductHandler $removeProductHandler;
+    private HasCoinsToReturnHandler $hasCoinsToReturnHandler;
+    private ReturnCoinsHandler $returnCoinsHandler;
+    private GetInsertedCoinsHandler $getInsertedCoinsHandler;
     private VendingMachineProductsAsOptionsPresenter $vendingMachineProductsAsOptionsPresenter;
-    private SelectProductVendingMachineHandler $selectProductVendingMachineHandler;
+    private SelectProductHandler $selectProductHandler;
 
     public function __construct(
         CreateVendingMachineHandler $createVendingMachineHandler,
-        GetVendingMachineProductsHandler $getVendingMachineProductsHandler,
+        GetProductsHandler $getProductsHandler,
         VendingMachineProductsPresenter $vendingMachineProductsPresenter,
-        AddCoinVendingMachineHandler $addCoinVendingMachineHandler,
+        AddCoinHandler $addCoinHandler,
         VendingMachineSummaryPresenter $vendingMachineSummaryPresenter,
-        GetSummaryVendingMachineHandler $getSummaryVendingMachineHandler,
-        RemoveCoinVendingMachineHandler $removeCoinVendingMachineHandler,
-        AddProductVendingMachineHandler $addProductVendingMachineHandler,
-        RemoveProductVendingMachineHandler $removeProductVendingMachineHandler,
-        HasCoinsToReturnVendingMachineHandler $hasCoinsToReturnVendingMachineHandler,
-        ReturnCoinsVendingMachineHandler $returnCoinsVendingMachineHandler,
-        GetInsertedCoinsVendingMachineHandler $getInsertedCoinsVendingMachineHandler,
+        GetSummaryHandler $getSummaryHandler,
+        RemoveCoinHandler $removeCoinHandler,
+        AddProductHandler $addProductHandler,
+        RemoveProductHandler $removeProductHandler,
+        HasCoinsToReturnHandler $hasCoinsToReturnHandler,
+        ReturnCoinsHandler $returnCoinsHandler,
+        GetInsertedCoinsHandler $getInsertedCoinsHandler,
         VendingMachineProductsAsOptionsPresenter $vendingMachineProductsAsOptionsPresenter,
-        SelectProductVendingMachineHandler $selectProductVendingMachineHandler
+        SelectProductHandler $selectProductHandler
     ) {
         $this->createVendingMachineHandler = $createVendingMachineHandler;
-        $this->getVendingMachineProductsHandler = $getVendingMachineProductsHandler;
+        $this->getProductsHandler = $getProductsHandler;
         $this->vendingMachineProductsPresenter = $vendingMachineProductsPresenter;
-        $this->addCoinVendingMachineHandler = $addCoinVendingMachineHandler;
+        $this->addCoinHandler = $addCoinHandler;
         $this->vendingMachineSummaryPresenter = $vendingMachineSummaryPresenter;
-        $this->getSummaryVendingMachineHandler = $getSummaryVendingMachineHandler;
-        $this->removeCoinVendingMachineHandler = $removeCoinVendingMachineHandler;
-        $this->addProductVendingMachineHandler = $addProductVendingMachineHandler;
-        $this->removeProductVendingMachineHandler = $removeProductVendingMachineHandler;
-        $this->hasCoinsToReturnVendingMachineHandler = $hasCoinsToReturnVendingMachineHandler;
-        $this->returnCoinsVendingMachineHandler = $returnCoinsVendingMachineHandler;
-        $this->getInsertedCoinsVendingMachineHandler = $getInsertedCoinsVendingMachineHandler;
+        $this->getSummaryHandler = $getSummaryHandler;
+        $this->removeCoinHandler = $removeCoinHandler;
+        $this->addProductHandler = $addProductHandler;
+        $this->removeProductHandler = $removeProductHandler;
+        $this->hasCoinsToReturnHandler = $hasCoinsToReturnHandler;
+        $this->returnCoinsHandler = $returnCoinsHandler;
+        $this->getInsertedCoinsHandler = $getInsertedCoinsHandler;
         $this->vendingMachineProductsAsOptionsPresenter = $vendingMachineProductsAsOptionsPresenter;
-        $this->selectProductVendingMachineHandler = $selectProductVendingMachineHandler;
+        $this->selectProductHandler = $selectProductHandler;
     }
 
     public function newMachine(): void
@@ -104,8 +104,8 @@ class VendingMachineManager implements VendingMachineService
     {
         $this->assertIsInitialized();
 
-        $request = new GetVendingMachineProducts($this->id);
-        $products = $this->getVendingMachineProductsHandler->execute($request);
+        $request = new GetProducts($this->id);
+        $products = $this->getProductsHandler->execute($request);
 
         if ($asOptions) {
             $this->vendingMachineProductsAsOptionsPresenter->present($products, $output);
@@ -123,24 +123,24 @@ class VendingMachineManager implements VendingMachineService
     {
         $this->assertIsInitialized();
 
-        $request = new AddCoinVendingMachine($this->id, $money, $quantity, $serviceMode);
-        $this->addCoinVendingMachineHandler->execute($request);
+        $request = new AddCoin($this->id, $money, $quantity, $serviceMode);
+        $this->addCoinHandler->execute($request);
     }
 
     public function removeCoin(Money $money): void
     {
         $this->assertIsInitialized();
 
-        $request = new RemoveCoinVendingMachine($this->id, $money);
-        $this->removeCoinVendingMachineHandler->execute($request);
+        $request = new RemoveCoin($this->id, $money);
+        $this->removeCoinHandler->execute($request);
     }
 
     public function getSummary(OutputInterface $output): void
     {
         $this->assertIsInitialized();
 
-        $request = new GetSummaryVendingMachine($this->id);
-        $result = $this->getSummaryVendingMachineHandler->execute($request);
+        $request = new GetSummary($this->id);
+        $result = $this->getSummaryHandler->execute($request);
 
         $this->vendingMachineSummaryPresenter->present($result, $output);
     }
@@ -149,24 +149,24 @@ class VendingMachineManager implements VendingMachineService
     {
         $this->assertIsInitialized();
 
-        $request = new AddProductVendingMachine($this->id, $position, $quantity);
-        $this->addProductVendingMachineHandler->execute($request);
+        $request = new AddProduct($this->id, $position, $quantity);
+        $this->addProductHandler->execute($request);
     }
 
     public function removeProduct(int $position): void
     {
         $this->assertIsInitialized();
 
-        $request = new RemoveProductVendingMachine($this->id, $position);
-        $this->removeProductVendingMachineHandler->execute($request);
+        $request = new RemoveProduct($this->id, $position);
+        $this->removeProductHandler->execute($request);
     }
 
     public function hasCoinsToReturn(): bool
     {
         $this->assertIsInitialized();
 
-        $request = new HasCoinsToReturnVendingMachine($this->id);
-        return $this->hasCoinsToReturnVendingMachineHandler->execute($request);
+        $request = new HasCoinsToReturn($this->id);
+        return $this->hasCoinsToReturnHandler->execute($request);
     }
 
     /**
@@ -176,8 +176,8 @@ class VendingMachineManager implements VendingMachineService
     {
         $this->assertIsInitialized();
 
-        $request = new ReturnCoinsVendingMachine($this->id);
-        return $this->returnCoinsVendingMachineHandler->execute($request);
+        $request = new ReturnCoins($this->id);
+        return $this->returnCoinsHandler->execute($request);
     }
 
     /**
@@ -187,8 +187,8 @@ class VendingMachineManager implements VendingMachineService
     {
         $this->assertIsInitialized();
 
-        $request = new GetInsertedCoinsVendingMachine($this->id);
-        return $this->getInsertedCoinsVendingMachineHandler->execute($request);
+        $request = new GetInsertedCoins($this->id);
+        return $this->getInsertedCoinsHandler->execute($request);
     }
 
     /**
@@ -200,8 +200,8 @@ class VendingMachineManager implements VendingMachineService
     {
         $this->assertIsInitialized();
 
-        $request = new SelectProductVendingMachine($this->id, $position);
-        return $this->selectProductVendingMachineHandler->execute($request);
+        $request = new SelectProduct($this->id, $position);
+        return $this->selectProductHandler->execute($request);
     }
 
     /**
