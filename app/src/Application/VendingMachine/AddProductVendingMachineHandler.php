@@ -8,7 +8,8 @@ class AddProductVendingMachineHandler
 {
     private VendingMachineRepository $vendingMachineRepository;
 
-    public function __construct(VendingMachineRepository $vendingMachineRepository) {
+    public function __construct(VendingMachineRepository $vendingMachineRepository)
+    {
         $this->vendingMachineRepository = $vendingMachineRepository;
     }
 

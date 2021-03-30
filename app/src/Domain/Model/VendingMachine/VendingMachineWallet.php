@@ -128,7 +128,7 @@ class VendingMachineWallet
             /** @var Money[] $coinsToReturn */
             $coinsToReturn = [];
             $coins = $this->coins;
-            usort($coins, function(VendingMachineWalletCoin $a, VendingMachineWalletCoin $b) {
+            usort($coins, function (VendingMachineWalletCoin $a, VendingMachineWalletCoin $b) {
                 return strcmp($a->getMoney()->getAmount(), $b->getMoney()->getAmount());
             });
             $returnSum = Money::EUR(0);
@@ -137,7 +137,7 @@ class VendingMachineWallet
                 $quantity = (int)($change->getAmount() / $coin->getMoney()->getAmount());
 
                 if ($quantity > 0 && ($coin->getQuantity() - $quantity > 0)) {
-                    for($i = 0; $i < $quantity; $i++) {
+                    for ($i = 0; $i < $quantity; $i++) {
                         $coinsToReturn[] = $coin->getMoney();
                         $this->removeCoin($coin);
                         $returnSum = $returnSum->add($coin->getMoney());

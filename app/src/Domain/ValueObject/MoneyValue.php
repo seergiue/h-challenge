@@ -2,7 +2,6 @@
 
 namespace App\Domain\ValueObject;
 
-use App\Domain\Exception\InvalidCoinTypeException;
 use Money\Money;
 
 class MoneyValue

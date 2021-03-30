@@ -56,12 +56,12 @@ class VendingMachineServiceModeAddProductCommand extends Command
         do {
             $question = new Question('Product to add (Ex: 1): ');
             $productSelection = $helper->ask($input, $output, $question);
-        } while(!is_numeric($productSelection) || $productSelection < 0 || $productSelection >= $productsCount);
+        } while (!is_numeric($productSelection) || $productSelection < 0 || $productSelection >= $productsCount);
 
         do {
             $question = new Question('Quantity to add: ');
             $quantity = $helper->ask($input, $output, $question);
-        } while(!is_numeric($quantity) || (is_numeric($quantity) && $quantity < 1));
+        } while (!is_numeric($quantity) || (is_numeric($quantity) && $quantity < 1));
 
         $this->vendingMachineService->addProduct((int)$productSelection, $quantity);
 

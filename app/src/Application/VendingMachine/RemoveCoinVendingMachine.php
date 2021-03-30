@@ -9,7 +9,7 @@ class RemoveCoinVendingMachine
 {
     private VendingMachineId $vendingMachineId;
 
-    private float $type;
+    private Money $money;
 
     public function __construct(VendingMachineId $vendingMachineId, Money $money)
     {

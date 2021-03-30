@@ -3,7 +3,6 @@
 namespace App\Application;
 
 use App\Application\Presenter\VendingMachineProductsAsOptionsPresenter;
-use App\Application\Presenter\VendingMachineProductsInServiceModePresenter;
 use App\Application\Presenter\VendingMachineProductsPresenter;
 use App\Application\Presenter\VendingMachineSummaryPresenter;
 use App\Application\VendingMachine\AddCoinVendingMachine;
@@ -30,7 +29,6 @@ use App\Application\VendingMachine\SelectProductVendingMachineHandler;
 use App\Domain\Exception\NotEnoughChangeVendingMachineException;
 use App\Domain\Exception\NotEnoughMoneyVendingMachineException;
 use App\Domain\Exception\VendingManagerNotInitializedException;
-use App\Domain\Model\Coin;
 use App\Domain\Model\VendingMachineProduct;
 use App\Domain\Service\VendingMachineService;
 use App\Domain\ValueObject\VendingMachineId;

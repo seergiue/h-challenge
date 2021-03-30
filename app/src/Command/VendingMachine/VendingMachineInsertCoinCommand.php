@@ -2,9 +2,7 @@
 
 namespace App\Command\VendingMachine;
 
-use App\Domain\Model\Coin;
 use App\Domain\Service\VendingMachineService;
-use App\Domain\ValueObject\CoinType;
 use App\Domain\ValueObject\MoneyValue;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
@@ -80,10 +78,10 @@ class VendingMachineInsertCoinCommand extends Command
                     $value = $helper->ask($input, $output, $question);
                 } while (!in_array($value, $moneyValues));
 
-                $this->vendingMachineService->addCoin(Money::EUR($value*100));
+                $this->vendingMachineService->addCoin(Money::EUR($value * 100));
                 $output->writeln('Coin added!' . PHP_EOL);
             }
-        } while($addCoins);
+        } while ($addCoins);
 
         return Command::SUCCESS;
     }

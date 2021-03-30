@@ -8,7 +8,8 @@ class GetSummaryVendingMachine
 {
     private VendingMachineId $vendingMachineId;
 
-    public function __construct(VendingMachineId $vendingMachineId) {
+    public function __construct(VendingMachineId $vendingMachineId)
+    {
         $this->vendingMachineId = $vendingMachineId;
     }
 

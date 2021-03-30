@@ -37,7 +37,7 @@ class VendingMachineStartCommand extends Command
         $this->clearConsole($output);
         $this->vendingMachineService->newMachine();
 
-        while(true) {
+        while (true) {
             $this->clearConsole($output);
             $io->title('Welcome to the Vending Machine');
             $table = new Table($output);

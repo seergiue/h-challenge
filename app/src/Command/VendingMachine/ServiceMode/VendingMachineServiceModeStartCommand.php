@@ -44,7 +44,7 @@ class VendingMachineServiceModeStartCommand extends Command
 
         $output->write(sprintf("\033\143"));
         $io = new SymfonyStyle($input, $output);
-        while(true) {
+        while (true) {
             $output->write(sprintf("\033\143"));
             $io->title('Vending Machine [Service Mode]');
 

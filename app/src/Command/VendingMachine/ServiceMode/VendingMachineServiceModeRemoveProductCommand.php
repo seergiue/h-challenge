@@ -56,7 +56,7 @@ class VendingMachineServiceModeRemoveProductCommand extends Command
         do {
             $question = new Question('Product to remove (Ex: 1): ');
             $productSelection = $helper->ask($input, $output, $question);
-        } while(!is_numeric($productSelection) || $productSelection < 0 || $productSelection >= $productsCount);
+        } while (!is_numeric($productSelection) || $productSelection < 0 || $productSelection >= $productsCount);
 
         $this->vendingMachineService->removeProduct((int)$productSelection);
 

@@ -7,7 +7,6 @@ use App\Application\VendingMachine\GetVendingMachineProductsHandler;
 use App\Domain\Exception\NotEnoughChangeVendingMachineException;
 use App\Domain\Exception\NotEnoughMoneyVendingMachineException;
 use App\Domain\Exception\ProductOutOfStockVendingMachineException;
-use App\Domain\Model\Coin;
 use App\Domain\Service\VendingMachineService;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
@@ -70,18 +69,18 @@ class VendingMachineBuyProductCommand extends Command
 
             if (!empty($result['change'])) {
                 $io->newLine();
-                $changeValues = array_map(function(Money $money) use ($moneyFormatter) {
+                $changeValues = array_map(function (Money $money) use ($moneyFormatter) {
                     return $moneyFormatter->format($money);
                 }, $result['change']);
                 $output->writeln('<fg=yellow>This is your change: ' . implode(', ', $changeValues) . '</>');
             }
-        } catch(ProductOutOfStockVendingMachineException $exception) {
+        } catch (ProductOutOfStockVendingMachineException $exception) {
             $io->newLine();
             $output->writeln('<error>This product is out of stock!</error>');
-        } catch(NotEnoughMoneyVendingMachineException $exception) {
+        } catch (NotEnoughMoneyVendingMachineException $exception) {
             $io->newLine();
             $output->writeln('<error>Not enough money!</error>');
-        } catch(NotEnoughChangeVendingMachineException $exception) {
+        } catch (NotEnoughChangeVendingMachineException $exception) {
             $io->newLine();
             $output->writeln('<error>' . $exception->getMessage() . '</error>');
         }

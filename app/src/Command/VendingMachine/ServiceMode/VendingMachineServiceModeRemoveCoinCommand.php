@@ -2,9 +2,7 @@
 
 namespace App\Command\VendingMachine\ServiceMode;
 
-use App\Domain\Exception\InvalidCoinTypeException;
 use App\Domain\Service\VendingMachineService;
-use App\Domain\ValueObject\CoinType;
 use App\Domain\ValueObject\MoneyValue;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
@@ -52,26 +50,17 @@ class VendingMachineServiceModeRemoveCoinCommand extends Command
             MoneyValue::getAll(true)
         );
 
-        while (true) {
-            $io->title('Vending Machine [Service Mode]');
-            $output->writeln('Remove coins from the machine. Accepted values: ' . implode(', ', $moneyValues));
-            $io->newLine();
-            $helper = $this->getHelper('question');
+        $io->title('Vending Machine [Service Mode]');
+        $output->writeln('Remove coins from the machine. Accepted values: ' . implode(', ', $moneyValues));
+        $io->newLine();
+        $helper = $this->getHelper('question');
 
-            do {
-                $question = new Question('Coin to remove: ');
-                $value = $helper->ask($input, $output, $question);
-            } while (!in_array($value, $moneyValues));
+        do {
+            $question = new Question('Coin to remove: ');
+            $value = $helper->ask($input, $output, $question);
+        } while (!in_array($value, $moneyValues));
 
-            try {
-                $this->vendingMachineService->removeCoin(Money::EUR($value*100));
-                break;
-            } catch (InvalidCoinTypeException $exception) {
-                $output->write(sprintf("\033\143"));
-                $io->newLine();
-                $output->writeln('<error>Invalid coin type</error>');
-            }
-        }
+        $this->vendingMachineService->removeCoin(Money::EUR($value * 100));
 
         return Command::SUCCESS;
     }

@@ -2,7 +2,6 @@
 
 namespace App\Command\VendingMachine;
 
-use App\Domain\Model\Coin;
 use App\Domain\Service\VendingMachineService;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
