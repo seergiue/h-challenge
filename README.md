@@ -4,6 +4,13 @@
 
 ![alt text](screenshot.png)
 
+
+```
+Note
+
+I didn't add all the tests I could because this is a coding challenge (not a real project) and because of time it would take. I tested a couple use cases and the most important domain logic.
+```
+
 ## Setup
 
 Setup the infrastructure
