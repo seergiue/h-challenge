@@ -7,6 +7,7 @@ use App\Domain\ValueObject\MoneyValue;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
 use Money\Money;
+use Money\MoneyFormatter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -40,24 +41,11 @@ class VendingMachineInsertCoinCommand extends Command
         }
 
         $io = new SymfonyStyle($input, $output);
-        $hasInsertedCoins = $this->vendingMachineService->hasCoinsToReturn();
 
         $currencies = new ISOCurrencies();
         $moneyFormatter = new DecimalMoneyFormatter($currencies);
 
-        if ($hasInsertedCoins) {
-            $insertedCoins = $this->vendingMachineService->getInsertedCoins();
-            $insertedCoinsValues = array_map(
-                function (Money $money) use ($moneyFormatter) {
-                    return $moneyFormatter->format($money);
-                },
-                $insertedCoins
-            );
-
-            $output->writeln('Inserted coins: ' . implode(', ', $insertedCoinsValues));
-        } else {
-            $output->writeln('There are no inserted coins. Add some!');
-        }
+        $this->printInsertedCoins($output, $moneyFormatter);
 
         $moneyValues = array_map(
             function (Money $money) use ($moneyFormatter) {
@@ -65,6 +53,7 @@ class VendingMachineInsertCoinCommand extends Command
             },
             MoneyValue::getAll(true)
         );
+
         $output->writeln('Add coins to the machine. Accepted values: ' . implode(', ', $moneyValues));
         $io->newLine();
         $helper = $this->getHelper('question');
@@ -84,5 +73,24 @@ class VendingMachineInsertCoinCommand extends Command
         } while ($addCoins);
 
         return Command::SUCCESS;
+    }
+
+    private function printInsertedCoins(OutputInterface $output, MoneyFormatter $moneyFormatter): void
+    {
+        $hasInsertedCoins = $this->vendingMachineService->hasCoinsToReturn();
+
+        if ($hasInsertedCoins) {
+            $insertedCoins = $this->vendingMachineService->getInsertedCoins();
+            $insertedCoinsValues = array_map(
+                function (Money $money) use ($moneyFormatter) {
+                    return $moneyFormatter->format($money);
+                },
+                $insertedCoins
+            );
+
+            $output->writeln('Inserted coins: ' . implode(', ', $insertedCoinsValues));
+        } else {
+            $output->writeln('There are no inserted coins. Add some!');
+        }
     }
 }
