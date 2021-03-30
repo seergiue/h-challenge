@@ -18,13 +18,6 @@ class VendingMachineTest extends TestCase
 {
     private const VALID_PRODUCT_POSITION = 0;
 
-    private $vendingMachineMock;
-
-    public function setUp(): void
-    {
-        $this->vendingMachineMock = $this->createMock(VendingMachine::class);
-    }
-
     public function testItShouldBuyProductWithChange()
     {
         $products = [

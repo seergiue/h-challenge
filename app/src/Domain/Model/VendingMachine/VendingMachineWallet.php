@@ -68,6 +68,8 @@ class VendingMachineWallet
 
     public function removeCoin(VendingMachineWalletCoin $vendingMachineWalletCoin): self
     {
+        MoneyValue::assertIsValid($vendingMachineWalletCoin->getMoney());
+
         $index = $this->getCoinIndex($vendingMachineWalletCoin);
 
         if (null !== $index) {
