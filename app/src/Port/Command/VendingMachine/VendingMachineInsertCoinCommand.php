@@ -59,7 +59,7 @@ class VendingMachineInsertCoinCommand extends Command
         $helper = $this->getHelper('question');
 
         do {
-            $confirmation = new ConfirmationQuestion('Do you want to insert coins? [y/n]: ', false);
+            $confirmation = new ConfirmationQuestion('<fg=yellow>Do you want to insert coins? [y/n]: </>', false);
 
             if ($addCoins = $helper->ask($input, $output, $confirmation)) {
                 do {
@@ -68,7 +68,7 @@ class VendingMachineInsertCoinCommand extends Command
                 } while (!in_array($value, $moneyValues));
 
                 $this->vendingMachineService->addCoin(Money::EUR($value * 100));
-                $output->writeln('Coin added!' . PHP_EOL);
+                $output->writeln('<fg=green>Coin added!</>' . PHP_EOL);
             }
         } while ($addCoins);
 
@@ -88,7 +88,7 @@ class VendingMachineInsertCoinCommand extends Command
                 $insertedCoins
             );
 
-            $output->writeln('Inserted coins: ' . implode(', ', $insertedCoinsValues));
+            $output->writeln('<fg=blue>Inserted coins: ' . implode(', ', $insertedCoinsValues) . '</>');
         } else {
             $output->writeln('There are no inserted coins. Add some!');
         }
