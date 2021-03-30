@@ -2,7 +2,7 @@
 
 namespace App\Domain\Model;
 
-use App\Domain\ValueObject\Money;
+use Money\Money;
 use App\Domain\ValueObject\ProductType;
 
 class Product

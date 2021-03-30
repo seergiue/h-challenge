@@ -46,7 +46,7 @@ class VendingMachineServiceModeAddProductCommand extends Command
         $output->writeln('Add products to the machine.');
         $output->writeln('Available products:');
         $io->newLine();
-        $this->vendingMachineService->getVendingMachineProductsInServiceMode($output);
+        $this->vendingMachineService->displayVendingMachineProducts($output, true);
         $io->newLine();
         $helper = $this->getHelper('question');
 

@@ -2,6 +2,9 @@
 
 namespace App\Domain\Model;
 
+use App\Domain\Exception\NotEnoughChangeVendingMachineException;
+use Money\Money;
+
 class VendingMachineWallet
 {
     /**
@@ -10,7 +13,7 @@ class VendingMachineWallet
     private array $coins;
 
     /**
-     * @var Coin[]
+     * @var Money[]
      */
     private array $inserted = [];
 
@@ -31,7 +34,7 @@ class VendingMachineWallet
     }
 
     /**
-     * @return Coin[]
+     * @return Money[]
      */
     public function getInserted(): array
     {
@@ -49,7 +52,7 @@ class VendingMachineWallet
         }
 
         if (!$serviceMode) {
-            $this->inserted[] = $vendingMachineWalletCoin->getCoin();
+            $this->inserted[] = $vendingMachineWalletCoin->getMoney();
         }
 
         return $this;
@@ -82,7 +85,7 @@ class VendingMachineWallet
     }
 
     /**
-     * @return Coin[]
+     * @return Money[]
      */
     public function returnCoins(): array
     {
@@ -96,10 +99,72 @@ class VendingMachineWallet
         return $insertedCoins;
     }
 
+    public function canBuy(Product $product): bool
+    {
+        return $this->getInsertedAmount()->greaterThanOrEqual($product->getPrice());
+    }
+
+    private function getInsertedAmount(): Money
+    {
+        $insertedValues = array_map(function (Money $money) {
+            return $money->getAmount();
+        }, $this->inserted);
+
+        $sum = array_sum($insertedValues);
+
+        return Money::EUR($sum);
+    }
+
+    /**
+     * @return Money[]
+     * @throws NotEnoughChangeVendingMachineException
+     */
+    public function calculateChange(Product $product): array
+    {
+        $change = $this->getInsertedAmount()->subtract($product->getPrice());
+        $originalChange = $change;
+
+        if ($change->greaterThan(Money::EUR(0))) {
+            /** @var Money[] $coinsToReturn */
+            $coinsToReturn = [];
+            $coins = $this->coins;
+            usort($coins, function(VendingMachineWalletCoin $a, VendingMachineWalletCoin $b) {
+                return strcmp($a->getMoney()->getAmount(), $b->getMoney()->getAmount());
+            });
+            $returnSum = Money::EUR(0);
+
+            foreach ($coins as $coin) {
+                $quantity = (int)($change->getAmount() / $coin->getMoney()->getAmount());
+
+                if ($quantity > 0 && ($coin->getQuantity() - $quantity > 0)) {
+                    for($i = 0; $i < $quantity; $i++) {
+                        $coinsToReturn[] = $coin->getMoney();
+                        $this->removeCoin($coin);
+                        $returnSum = $returnSum->add($coin->getMoney());
+                    }
+                    $toSubtract = $coin->getMoney()->multiply($quantity);
+                    $change = $change->subtract($toSubtract);
+                }
+            }
+
+            if (!$returnSum->equals($originalChange)) {
+                throw new NotEnoughChangeVendingMachineException();
+            }
+
+            $this->inserted = [];
+
+            return $coinsToReturn;
+        }
+
+        $this->inserted = [];
+
+        return $this->returnCoins();
+    }
+
     private function getCoinIndex(VendingMachineWalletCoin $vendingMachineWalletCoin): ?int
     {
         foreach ($this->coins as $index => $selfCoin) {
-            if ($selfCoin->getCoin()->getType()->equals($vendingMachineWalletCoin->getCoin()->getType())) {
+            if ($selfCoin->getMoney()->equals($vendingMachineWalletCoin->getMoney())) {
                 return $index;
             }
         }

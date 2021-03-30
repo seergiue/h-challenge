@@ -3,7 +3,9 @@
 namespace App\Domain\Service;
 
 use App\Domain\Model\Coin;
+use App\Domain\Model\VendingMachineProduct;
 use App\Domain\ValueObject\VendingMachineId;
+use Money\Money;
 use Symfony\Component\Console\Output\OutputInterface;
 
 interface VendingMachineService
@@ -12,17 +14,15 @@ interface VendingMachineService
 
     public function getMachineId(): VendingMachineId;
 
-    public function getVendingMachineProducts(OutputInterface $output): void;
+    public function displayVendingMachineProducts(OutputInterface $output, bool $asOptions = false): void;
 
     public function isInitialized(): bool;
 
-    public function addCoin(float $coinValue, int $quantity = 1, bool $serviceMode = false): void;
+    public function addCoin(Money $money, int $quantity = 1, bool $serviceMode = false): void;
 
-    public function removeCoin(float $coinValue): void;
+    public function removeCoin(Money $money): void;
 
     public function getSummary(OutputInterface $output): void;
-
-    public function getVendingMachineProductsInServiceMode(OutputInterface $output): void;
 
     public function addProduct(int $position, int $quantity): void;
 
@@ -31,12 +31,17 @@ interface VendingMachineService
     public function hasCoinsToReturn(): bool;
 
     /**
-     * @return Coin[]
+     * @return Money[]
      */
     public function returnCoins(): array;
 
     /**
-     * @return Coin[]
+     * @return Money[]
      */
     public function getInsertedCoins(): array;
+
+    /**
+     * @return array<string, VendingMachineProduct|Money[]>
+     */
+    public function buyProduct(int $position): array;
 }

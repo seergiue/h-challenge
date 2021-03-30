@@ -6,7 +6,7 @@ use App\Domain\Model\Coin;
 use App\Domain\Model\VendingMachineWalletCoin;
 use App\Domain\Service\Repository\VendingMachineRepository;
 use App\Domain\ValueObject\CoinType;
-use App\Domain\ValueObject\Money;
+use Money\Money;
 
 class RemoveCoinVendingMachineHandler
 {
@@ -21,10 +21,7 @@ class RemoveCoinVendingMachineHandler
         $vendingMachine = $this->vendingMachineRepository->findById($request->getVendingMachineId());
         $vendingMachine->getWallet()->removeCoin(
             new VendingMachineWalletCoin(
-                new Coin(
-                    Money::fromValue(CoinType::fromValue($request->getType())->getValue()),
-                    CoinType::fromValue($request->getType())
-                ),
+                $request->getMoney(),
                 1
             )
         );

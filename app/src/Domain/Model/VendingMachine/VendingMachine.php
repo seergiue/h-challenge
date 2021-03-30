@@ -2,8 +2,12 @@
 
 namespace App\Domain\Model;
 
-use App\Domain\ValueObject\CoinType;
-use App\Domain\ValueObject\Money;
+use App\Domain\Exception\InvalidVendingMachineProductPositionException;
+use App\Domain\Exception\NotEnoughChangeVendingMachineException;
+use App\Domain\Exception\NotEnoughMoneyVendingMachineException;
+use App\Domain\Exception\ProductOutOfStockVendingMachineException;
+use App\Domain\ValueObject\MoneyValue;
+use Money\Money;
 use App\Domain\ValueObject\ProductType;
 use App\Domain\ValueObject\VendingMachineId;
 
@@ -49,20 +53,76 @@ class VendingMachine
     public static function withProductsAndWallet(): self
     {
         $products = [
-            new VendingMachineProduct(new Product('Water', Money::fromValue(0.65), ProductType::water()), 1),
-            new VendingMachineProduct(new Product('Juice', Money::fromValue(1.00), ProductType::juice()), 1),
-            new VendingMachineProduct(new Product('Soda', Money::fromValue(1.50), ProductType::soda()), 1),
+            new VendingMachineProduct(new Product('Water', Money::EUR(65), ProductType::water()), 1),
+            new VendingMachineProduct(new Product('Juice', Money::EUR(100), ProductType::juice()), 1),
+            new VendingMachineProduct(new Product('Soda', Money::EUR(150), ProductType::soda()), 1),
         ];
 
         $coins = [
-            new VendingMachineWalletCoin(new Coin(Money::fromValue(CoinType::fiveCents()->getValue()), CoinType::fiveCents()), 10),
-            new VendingMachineWalletCoin(new Coin(Money::fromValue(CoinType::tenCents()->getValue()), CoinType::tenCents()), 10),
-            new VendingMachineWalletCoin(new Coin(Money::fromValue(CoinType::twentyFiveCents()->getValue()), CoinType::twentyFiveCents()), 10),
-            new VendingMachineWalletCoin(new Coin(Money::fromValue(CoinType::oneEuro()->getValue()), CoinType::oneEuro()), 10)
+            new VendingMachineWalletCoin(MoneyValue::fiveCents(), 10),
+            new VendingMachineWalletCoin(MoneyValue::tenCents(), 10),
+            new VendingMachineWalletCoin(MoneyValue::twentyFiveCents(), 10),
+            new VendingMachineWalletCoin(MoneyValue::oneEuro(), 10),
         ];
 
         $wallet = new VendingMachineWallet($coins);
 
         return new self($products, $wallet);
+    }
+
+    /**
+     * @return array<string, VendingMachineProduct|Money[]>
+     * @throws NotEnoughMoneyVendingMachineException
+     * @throws NotEnoughChangeVendingMachineException
+     */
+    public function buyProduct(int $position): array
+    {
+        $vendingMachineProduct = $this->getProductAt($position);
+        $wallet = $this->getWallet();
+
+        if ($vendingMachineProduct->getQuantity() <= 0) {
+            throw new ProductOutOfStockVendingMachineException($vendingMachineProduct->getProduct());
+        }
+
+        if (!$wallet->canBuy($vendingMachineProduct->getProduct())) {
+            throw new NotEnoughMoneyVendingMachineException();
+        }
+
+        $change = $this->getWallet()->calculateChange($vendingMachineProduct->getProduct());
+        $this->removeProduct($position);
+
+        return [
+            'product' => $vendingMachineProduct,
+            'change' => $change
+        ];
+    }
+
+    public function addProduct(int $position, int $quantity = 1): VendingMachineProduct
+    {
+        $vendingMachineProduct = $this->getProductAt($position);
+        $vendingMachineProduct->setQuantity($vendingMachineProduct->getQuantity() + $quantity);
+
+        return $vendingMachineProduct;
+    }
+
+    public function removeProduct(int $position): VendingMachineProduct
+    {
+        $vendingMachineProduct = $this->getProductAt($position);
+        $vendingMachineProduct->setQuantity($vendingMachineProduct->getQuantity() - 1);
+
+        return $vendingMachineProduct;
+    }
+
+    /**
+     * @throws InvalidVendingMachineProductPositionException
+     */
+    private function getProductAt(int $position): VendingMachineProduct
+    {
+        $products = $this->getProducts();
+        if (!array_key_exists($position, $products)) {
+            throw new InvalidVendingMachineProductPositionException($position);
+        }
+
+        return $products[$position];
     }
 }

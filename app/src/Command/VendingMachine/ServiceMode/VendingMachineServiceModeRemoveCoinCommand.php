@@ -5,6 +5,10 @@ namespace App\Command\VendingMachine\ServiceMode;
 use App\Domain\Exception\InvalidCoinTypeException;
 use App\Domain\Service\VendingMachineService;
 use App\Domain\ValueObject\CoinType;
+use App\Domain\ValueObject\MoneyValue;
+use Money\Currencies\ISOCurrencies;
+use Money\Formatter\DecimalMoneyFormatter;
+use Money\Money;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -38,16 +42,29 @@ class VendingMachineServiceModeRemoveCoinCommand extends Command
 
         $io = new SymfonyStyle($input, $output);
 
+        $currencies = new ISOCurrencies();
+        $moneyFormatter = new DecimalMoneyFormatter($currencies);
+
+        $moneyValues = array_map(
+            function (Money $money) use ($moneyFormatter) {
+                return $moneyFormatter->format($money);
+            },
+            MoneyValue::getAll(true)
+        );
+
         while (true) {
             $io->title('Vending Machine [Service Mode]');
-            $output->writeln('Remove coins from the machine. Accepted values: ' . implode(', ', CoinType::VALID_TYPES));
+            $output->writeln('Remove coins from the machine. Accepted values: ' . implode(', ', $moneyValues));
             $io->newLine();
             $helper = $this->getHelper('question');
-            $question = new Question('Coin to remove: ');
 
-            $coin = $helper->ask($input, $output, $question);
+            do {
+                $question = new Question('Coin to remove: ');
+                $value = $helper->ask($input, $output, $question);
+            } while (!in_array($value, $moneyValues));
+
             try {
-                $this->vendingMachineService->removeCoin((float) $coin);
+                $this->vendingMachineService->removeCoin(Money::EUR($value*100));
                 break;
             } catch (InvalidCoinTypeException $exception) {
                 $output->write(sprintf("\033\143"));

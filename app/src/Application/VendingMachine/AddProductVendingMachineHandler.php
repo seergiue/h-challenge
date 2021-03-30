@@ -15,8 +15,7 @@ class AddProductVendingMachineHandler
     public function execute(AddProductVendingMachine $request): void
     {
         $vendingMachine = $this->vendingMachineRepository->findById($request->getVendingMachineId());
-        $product = $vendingMachine->getProducts()[$request->getPosition()];
-        $product->setQuantity($product->getQuantity() + $request->getQuantity());
+        $vendingMachine->addProduct($request->getPosition(), $request->getQuantity());
 
         $this->vendingMachineRepository->save($vendingMachine);
     }

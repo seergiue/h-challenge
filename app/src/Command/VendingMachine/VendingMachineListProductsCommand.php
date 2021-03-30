@@ -33,7 +33,7 @@ class VendingMachineListProductsCommand extends Command
             return Command::SUCCESS;
         }
 
-        $this->vendingMachineService->getVendingMachineProducts($output);
+        $this->vendingMachineService->displayVendingMachineProducts($output);
         $helper = $this->getHelper('question');
         $question = new Question('Press enter to go back');
 

@@ -3,18 +3,17 @@
 namespace App\Application\VendingMachine;
 
 use App\Domain\ValueObject\VendingMachineId;
-use Money\Money;
 
-class RemoveCoinVendingMachine
+class SelectProductVendingMachine
 {
     private VendingMachineId $vendingMachineId;
 
-    private float $type;
+    private int $productPosition;
 
-    public function __construct(VendingMachineId $vendingMachineId, Money $money)
+    public function __construct(VendingMachineId $vendingMachineId, int $productPosition)
     {
         $this->vendingMachineId = $vendingMachineId;
-        $this->money = $money;
+        $this->productPosition = $productPosition;
     }
 
     public function getVendingMachineId(): VendingMachineId
@@ -22,8 +21,8 @@ class RemoveCoinVendingMachine
         return $this->vendingMachineId;
     }
 
-    public function getMoney(): Money
+    public function getProductPosition(): int
     {
-        return $this->money;
+        return $this->productPosition;
     }
 }

@@ -2,21 +2,23 @@
 
 namespace App\Domain\Model;
 
+use Money\Money;
+
 class VendingMachineWalletCoin
 {
-    private Coin $coin;
+    private Money $money;
 
     private int $quantity;
 
-    public function __construct(Coin $coin, int $quantity)
+    public function __construct(Money $money, int $quantity)
     {
-        $this->coin = $coin;
+        $this->money = $money;
         $this->quantity = $quantity;
     }
 
-    public function getCoin(): Coin
+    public function getMoney(): Money
     {
-        return $this->coin;
+        return $this->money;
     }
 
     public function getQuantity(): int

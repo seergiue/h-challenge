@@ -15,8 +15,7 @@ class RemoveProductVendingMachineHandler
     public function execute(RemoveProductVendingMachine $request): void
     {
         $vendingMachine = $this->vendingMachineRepository->findById($request->getVendingMachineId());
-        $product = $vendingMachine->getProducts()[$request->getPosition()];
-        $product->setQuantity($product->getQuantity() - 1);
+        $vendingMachine->removeProduct($request->getPosition());
 
         $this->vendingMachineRepository->save($vendingMachine);
     }

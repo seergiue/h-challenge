@@ -2,11 +2,8 @@
 
 namespace App\Application\VendingMachine;
 
-use App\Domain\Model\Coin;
 use App\Domain\Model\VendingMachineWalletCoin;
 use App\Domain\Service\Repository\VendingMachineRepository;
-use App\Domain\ValueObject\CoinType;
-use App\Domain\ValueObject\Money;
 
 class AddCoinVendingMachineHandler
 {
@@ -21,10 +18,7 @@ class AddCoinVendingMachineHandler
         $vendingMachine = $this->vendingMachineRepository->findById($request->getVendingMachineId());
         $vendingMachine->getWallet()->addCoin(
             new VendingMachineWalletCoin(
-                new Coin(
-                    Money::fromValue(CoinType::fromValue($request->getType())->getValue()),
-                    CoinType::fromValue($request->getType())
-                ),
+                $request->getMoney(),
                 $request->getQuantity()
             ),
             $request->isServiceMode()

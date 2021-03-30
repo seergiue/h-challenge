@@ -2,11 +2,8 @@
 
 namespace App\Application\VendingMachine;
 
-use App\Domain\Model\Coin;
-use App\Domain\Model\VendingMachineWalletCoin;
 use App\Domain\Service\Repository\VendingMachineRepository;
-use App\Domain\ValueObject\CoinType;
-use App\Domain\ValueObject\Money;
+use Money\Money;
 
 class ReturnCoinsVendingMachineHandler
 {
@@ -17,7 +14,7 @@ class ReturnCoinsVendingMachineHandler
     }
 
     /**
-     * @return Coin[]
+     * @return Money[]
      */
     public function execute(ReturnCoinsVendingMachine $request): array
     {

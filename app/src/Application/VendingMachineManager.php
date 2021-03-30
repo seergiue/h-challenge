@@ -2,6 +2,7 @@
 
 namespace App\Application;
 
+use App\Application\Presenter\VendingMachineProductsAsOptionsPresenter;
 use App\Application\Presenter\VendingMachineProductsInServiceModePresenter;
 use App\Application\Presenter\VendingMachineProductsPresenter;
 use App\Application\Presenter\VendingMachineSummaryPresenter;
@@ -24,10 +25,16 @@ use App\Application\VendingMachine\RemoveProductVendingMachine;
 use App\Application\VendingMachine\RemoveProductVendingMachineHandler;
 use App\Application\VendingMachine\ReturnCoinsVendingMachine;
 use App\Application\VendingMachine\ReturnCoinsVendingMachineHandler;
+use App\Application\VendingMachine\SelectProductVendingMachine;
+use App\Application\VendingMachine\SelectProductVendingMachineHandler;
+use App\Domain\Exception\NotEnoughChangeVendingMachineException;
+use App\Domain\Exception\NotEnoughMoneyVendingMachineException;
 use App\Domain\Exception\VendingManagerNotInitializedException;
 use App\Domain\Model\Coin;
+use App\Domain\Model\VendingMachineProduct;
 use App\Domain\Service\VendingMachineService;
 use App\Domain\ValueObject\VendingMachineId;
+use Money\Money;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class VendingMachineManager implements VendingMachineService
@@ -41,12 +48,13 @@ class VendingMachineManager implements VendingMachineService
     private VendingMachineSummaryPresenter $vendingMachineSummaryPresenter;
     private GetSummaryVendingMachineHandler $getSummaryVendingMachineHandler;
     private RemoveCoinVendingMachineHandler $removeCoinVendingMachineHandler;
-    private VendingMachineProductsInServiceModePresenter $vendingMachineProductsInServiceModePresenter;
     private AddProductVendingMachineHandler $addProductVendingMachineHandler;
     private RemoveProductVendingMachineHandler $removeProductVendingMachineHandler;
     private HasCoinsToReturnVendingMachineHandler $hasCoinsToReturnVendingMachineHandler;
     private ReturnCoinsVendingMachineHandler $returnCoinsVendingMachineHandler;
     private GetInsertedCoinsVendingMachineHandler $getInsertedCoinsVendingMachineHandler;
+    private VendingMachineProductsAsOptionsPresenter $vendingMachineProductsAsOptionsPresenter;
+    private SelectProductVendingMachineHandler $selectProductVendingMachineHandler;
 
     public function __construct(
         CreateVendingMachineHandler $createVendingMachineHandler,
@@ -56,12 +64,13 @@ class VendingMachineManager implements VendingMachineService
         VendingMachineSummaryPresenter $vendingMachineSummaryPresenter,
         GetSummaryVendingMachineHandler $getSummaryVendingMachineHandler,
         RemoveCoinVendingMachineHandler $removeCoinVendingMachineHandler,
-        VendingMachineProductsInServiceModePresenter $vendingMachineProductsInServiceModePresenter,
         AddProductVendingMachineHandler $addProductVendingMachineHandler,
         RemoveProductVendingMachineHandler $removeProductVendingMachineHandler,
         HasCoinsToReturnVendingMachineHandler $hasCoinsToReturnVendingMachineHandler,
         ReturnCoinsVendingMachineHandler $returnCoinsVendingMachineHandler,
-        GetInsertedCoinsVendingMachineHandler $getInsertedCoinsVendingMachineHandler
+        GetInsertedCoinsVendingMachineHandler $getInsertedCoinsVendingMachineHandler,
+        VendingMachineProductsAsOptionsPresenter $vendingMachineProductsAsOptionsPresenter,
+        SelectProductVendingMachineHandler $selectProductVendingMachineHandler
     ) {
         $this->createVendingMachineHandler = $createVendingMachineHandler;
         $this->getVendingMachineProductsHandler = $getVendingMachineProductsHandler;
@@ -70,12 +79,13 @@ class VendingMachineManager implements VendingMachineService
         $this->vendingMachineSummaryPresenter = $vendingMachineSummaryPresenter;
         $this->getSummaryVendingMachineHandler = $getSummaryVendingMachineHandler;
         $this->removeCoinVendingMachineHandler = $removeCoinVendingMachineHandler;
-        $this->vendingMachineProductsInServiceModePresenter = $vendingMachineProductsInServiceModePresenter;
         $this->addProductVendingMachineHandler = $addProductVendingMachineHandler;
         $this->removeProductVendingMachineHandler = $removeProductVendingMachineHandler;
         $this->hasCoinsToReturnVendingMachineHandler = $hasCoinsToReturnVendingMachineHandler;
         $this->returnCoinsVendingMachineHandler = $returnCoinsVendingMachineHandler;
         $this->getInsertedCoinsVendingMachineHandler = $getInsertedCoinsVendingMachineHandler;
+        $this->vendingMachineProductsAsOptionsPresenter = $vendingMachineProductsAsOptionsPresenter;
+        $this->selectProductVendingMachineHandler = $selectProductVendingMachineHandler;
     }
 
     public function newMachine(): void
@@ -92,14 +102,18 @@ class VendingMachineManager implements VendingMachineService
     /**
      * @throws VendingManagerNotInitializedException
      */
-    public function getvendingMachineProducts(OutputInterface $output): void
+    public function displayVendingMachineProducts(OutputInterface $output, bool $asOptions = false): void
     {
         $this->assertIsInitialized();
 
         $request = new GetVendingMachineProducts($this->id);
         $products = $this->getVendingMachineProductsHandler->execute($request);
 
-        $this->vendingMachineProductsPresenter->present($products, $output);
+        if ($asOptions) {
+            $this->vendingMachineProductsAsOptionsPresenter->present($products, $output);
+        } else {
+            $this->vendingMachineProductsPresenter->present($products, $output);
+        }
     }
 
     public function isInitialized(): bool
@@ -107,19 +121,19 @@ class VendingMachineManager implements VendingMachineService
         return null !== $this->id;
     }
 
-    public function addCoin(float $coinValue, int $quantity = 1, bool $serviceMode = false): void
+    public function addCoin(Money $money, int $quantity = 1, bool $serviceMode = false): void
     {
         $this->assertIsInitialized();
 
-        $request = new AddCoinVendingMachine($this->id, $coinValue, $quantity, $serviceMode);
+        $request = new AddCoinVendingMachine($this->id, $money, $quantity, $serviceMode);
         $this->addCoinVendingMachineHandler->execute($request);
     }
 
-    public function removeCoin(float $coinValue): void
+    public function removeCoin(Money $money): void
     {
         $this->assertIsInitialized();
 
-        $request = new RemoveCoinVendingMachine($this->id, $coinValue);
+        $request = new RemoveCoinVendingMachine($this->id, $money);
         $this->removeCoinVendingMachineHandler->execute($request);
     }
 
@@ -131,16 +145,6 @@ class VendingMachineManager implements VendingMachineService
         $result = $this->getSummaryVendingMachineHandler->execute($request);
 
         $this->vendingMachineSummaryPresenter->present($result, $output);
-    }
-
-    public function getVendingMachineProductsInServiceMode(OutputInterface $output): void
-    {
-        $this->assertIsInitialized();
-
-        $request = new GetVendingMachineProducts($this->id);
-        $products = $this->getVendingMachineProductsHandler->execute($request);
-
-        $this->vendingMachineProductsInServiceModePresenter->present($products, $output);
     }
 
     public function addProduct(int $position, int $quantity): void
@@ -168,7 +172,7 @@ class VendingMachineManager implements VendingMachineService
     }
 
     /**
-     * @return Coin[]
+     * @return Money[]
      */
     public function returnCoins(): array
     {
@@ -179,7 +183,7 @@ class VendingMachineManager implements VendingMachineService
     }
 
     /**
-     * @return Coin[]
+     * @return Money[]
      */
     public function getInsertedCoins(): array
     {
@@ -187,6 +191,19 @@ class VendingMachineManager implements VendingMachineService
 
         $request = new GetInsertedCoinsVendingMachine($this->id);
         return $this->getInsertedCoinsVendingMachineHandler->execute($request);
+    }
+
+    /**
+     * @return array<string, VendingMachineProduct|Money[]>
+     * @throws NotEnoughChangeVendingMachineException
+     * @throws NotEnoughMoneyVendingMachineException
+     */
+    public function buyProduct(int $position): array
+    {
+        $this->assertIsInitialized();
+
+        $request = new SelectProductVendingMachine($this->id, $position);
+        return $this->selectProductVendingMachineHandler->execute($request);
     }
 
     /**

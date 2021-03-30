@@ -5,6 +5,10 @@ namespace App\Command\VendingMachine\ServiceMode;
 use App\Domain\Exception\InvalidCoinTypeException;
 use App\Domain\Service\VendingMachineService;
 use App\Domain\ValueObject\CoinType;
+use App\Domain\ValueObject\MoneyValue;
+use Money\Currencies\ISOCurrencies;
+use Money\Formatter\DecimalMoneyFormatter;
+use Money\Money;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -38,16 +42,26 @@ class VendingMachineServiceModeAddCoinCommand extends Command
 
         $io = new SymfonyStyle($input, $output);
 
+        $currencies = new ISOCurrencies();
+        $moneyFormatter = new DecimalMoneyFormatter($currencies);
+
+        $moneyValues = array_map(
+            function (Money $money) use ($moneyFormatter) {
+                return $moneyFormatter->format($money);
+            },
+            MoneyValue::getAll(true)
+        );
+
         while (true) {
             $io->title('Vending Machine [Service Mode]');
-            $output->writeln('Add coins to the machine. Accepted values: ' . implode(', ', CoinType::VALID_TYPES));
+            $output->writeln('Add coins to the machine. Accepted values: ' . implode(', ', $moneyValues));
             $io->newLine();
             $helper = $this->getHelper('question');
 
             do {
                 $question = new Question('Coin to add: ');
-                $coin = $helper->ask($input, $output, $question);
-            } while(!in_array($coin, CoinType::VALID_TYPES));
+                $value = $helper->ask($input, $output, $question);
+            } while (!in_array($value, $moneyValues));
 
             do {
                 $question = new Question('Quantity to add: ');
@@ -55,7 +69,7 @@ class VendingMachineServiceModeAddCoinCommand extends Command
             } while(!is_numeric($quantity) || (is_numeric($quantity) && $quantity < 1));
 
             try {
-                $this->vendingMachineService->addCoin((float) $coin, $quantity, true);
+                $this->vendingMachineService->addCoin(Money::EUR($value*100), $quantity, true);
                 break;
             } catch (InvalidCoinTypeException $exception) {
                 $output->write(sprintf("\033\143"));

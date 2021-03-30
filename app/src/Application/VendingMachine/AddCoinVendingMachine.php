@@ -3,21 +3,22 @@
 namespace App\Application\VendingMachine;
 
 use App\Domain\ValueObject\VendingMachineId;
+use Money\Money;
 
 class AddCoinVendingMachine
 {
     private VendingMachineId $vendingMachineId;
 
-    private float $type;
+    private Money $money;
 
     private int $quantity;
 
     private bool $serviceMode;
 
-    public function __construct(VendingMachineId $vendingMachineId, float $type, int $quantity, bool $serviceMode)
+    public function __construct(VendingMachineId $vendingMachineId, Money $money, int $quantity, bool $serviceMode)
     {
         $this->vendingMachineId = $vendingMachineId;
-        $this->type = $type;
+        $this->money = $money;
         $this->quantity = $quantity;
         $this->serviceMode = $serviceMode;
     }
@@ -27,16 +28,16 @@ class AddCoinVendingMachine
         return $this->vendingMachineId;
     }
 
-    public function getType(): float
+    public function getMoney(): Money
     {
-        return $this->type;
+        return $this->money;
     }
 
     public function getQuantity(): int
     {
         return $this->quantity;
     }
-    
+
     public function isServiceMode(): bool
     {
         return $this->serviceMode;

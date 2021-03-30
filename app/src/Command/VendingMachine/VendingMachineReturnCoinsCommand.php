@@ -4,6 +4,9 @@ namespace App\Command\VendingMachine;
 
 use App\Domain\Model\Coin;
 use App\Domain\Service\VendingMachineService;
+use Money\Currencies\ISOCurrencies;
+use Money\Formatter\DecimalMoneyFormatter;
+use Money\Money;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,9 +38,12 @@ class VendingMachineReturnCoinsCommand extends Command
         }
 
         if ($this->vendingMachineService->hasCoinsToReturn()) {
+            $currencies = new ISOCurrencies();
+            $moneyFormatter = new DecimalMoneyFormatter($currencies);
+
             $returnedCoins = $this->vendingMachineService->returnCoins();
-            $returnedCoinsValue = array_map(function (Coin $coin) {
-                return $coin->getAmount()->getValue();
+            $returnedCoinsValue = array_map(function (Money $money) use ($moneyFormatter) {
+                return $moneyFormatter->format($money);
             }, $returnedCoins);
 
             $output->writeln('Coins returned: ' . implode(', ', $returnedCoinsValue));

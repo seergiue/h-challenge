@@ -47,7 +47,7 @@ class VendingMachineStartCommand extends Command
                 ->setStyle('box')
                 ->setRows([
                     [self::ACTION_LIST_PRODUCTS, 'List products'],
-                    [self::ACTION_SELECT_PRODUCT, 'Select product'],
+                    [self::ACTION_SELECT_PRODUCT, 'Buy product'],
                     [self::ACTION_INSERT_COINS, 'Insert coins'],
                     [self::ACTION_RETURN_COINS, 'Return coins'],
                     [self::ACTION_SERVICE, 'Service'],
@@ -67,6 +67,8 @@ class VendingMachineStartCommand extends Command
                     $command->run($input, $output);
                     break;
                 case self::ACTION_SELECT_PRODUCT:
+                    $command = $this->getApplication()->find('vending-machine:buy-product');
+                    $command->run($input, $output);
                     break;
                 case self::ACTION_INSERT_COINS:
                     $command = $this->getApplication()->find('vending-machine:insert-coins');

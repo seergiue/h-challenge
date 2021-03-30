@@ -5,6 +5,10 @@ namespace App\Command\VendingMachine;
 use App\Domain\Model\Coin;
 use App\Domain\Service\VendingMachineService;
 use App\Domain\ValueObject\CoinType;
+use App\Domain\ValueObject\MoneyValue;
+use Money\Currencies\ISOCurrencies;
+use Money\Formatter\DecimalMoneyFormatter;
+use Money\Money;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -40,11 +44,14 @@ class VendingMachineInsertCoinCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $hasInsertedCoins = $this->vendingMachineService->hasCoinsToReturn();
 
+        $currencies = new ISOCurrencies();
+        $moneyFormatter = new DecimalMoneyFormatter($currencies);
+
         if ($hasInsertedCoins) {
             $insertedCoins = $this->vendingMachineService->getInsertedCoins();
             $insertedCoinsValues = array_map(
-                function (Coin $coin) {
-                    return $coin->getType()->getValue();
+                function (Money $money) use ($moneyFormatter) {
+                    return $moneyFormatter->format($money);
                 },
                 $insertedCoins
             );
@@ -54,7 +61,13 @@ class VendingMachineInsertCoinCommand extends Command
             $output->writeln('There are no inserted coins. Add some!');
         }
 
-        $output->writeln('Add coins to the machine. Accepted values: ' . implode(', ', CoinType::VALID_TYPES));
+        $moneyValues = array_map(
+            function (Money $money) use ($moneyFormatter) {
+                return $moneyFormatter->format($money);
+            },
+            MoneyValue::getAll(true)
+        );
+        $output->writeln('Add coins to the machine. Accepted values: ' . implode(', ', $moneyValues));
         $io->newLine();
         $helper = $this->getHelper('question');
 
@@ -64,10 +77,10 @@ class VendingMachineInsertCoinCommand extends Command
             if ($addCoins = $helper->ask($input, $output, $confirmation)) {
                 do {
                     $question = new Question('Coin to add: ');
-                    $coin = $helper->ask($input, $output, $question);
-                } while (!in_array($coin, CoinType::VALID_TYPES));
+                    $value = $helper->ask($input, $output, $question);
+                } while (!in_array($value, $moneyValues));
 
-                $this->vendingMachineService->addCoin($coin, 1);
+                $this->vendingMachineService->addCoin(Money::EUR($value*100));
                 $output->writeln('Coin added!' . PHP_EOL);
             }
         } while($addCoins);

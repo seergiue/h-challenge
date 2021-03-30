@@ -3,10 +3,12 @@
 namespace App\Application\Presenter;
 
 use App\Domain\Model\VendingMachineProduct;
+use Money\Currencies\ISOCurrencies;
+use Money\Formatter\DecimalMoneyFormatter;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class VendingMachineProductsInServiceModePresenter
+class VendingMachineProductsAsOptionsPresenter
 {
     /**
      * @param VendingMachineProduct[] $vendingMachineProducts
@@ -14,13 +16,15 @@ class VendingMachineProductsInServiceModePresenter
     public function present(array $vendingMachineProducts, OutputInterface $output): void
     {
         $rows = [];
+        $currencies = new ISOCurrencies();
+        $moneyFormatter = new DecimalMoneyFormatter($currencies);
 
-        foreach ($vendingMachineProducts as $k => $vendingMachineProduct) {
+        foreach ($vendingMachineProducts as $key => $vendingMachineProduct) {
             $rows[] = [
-                $k,
+                $key,
                 $vendingMachineProduct->getProduct()->getType()->getValue(),
                 $vendingMachineProduct->getProduct()->getName(),
-                $vendingMachineProduct->getProduct()->getPrice()->getValue(),
+                $moneyFormatter->format($vendingMachineProduct->getProduct()->getPrice()),
                 $vendingMachineProduct->getQuantity()
             ];
         }
